@@ -3,11 +3,10 @@
    Vinicius Alberto Alves da Silva 201665558C 
 */
 
-package lang;
-
 import java.io.*;
-import lang.parser.*;
-import lang.ast.*;
+import parser.*;
+import ast.*;
+import parser.*;
 
 public class LangCompiler{
    // Recupera o nome base (sem extensão) de um arquivo.

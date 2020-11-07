@@ -3,12 +3,12 @@
    Vinicius Alberto Alves da Silva 201665558C 
 */
 
-package lang.parser;
+package parser;
 
 import lang.parser.LangLexer;
 import lang.parser.LangParser;
-import lang.ast.Node;
-import lang.ast.SuperNode;
+import ast.Node;
+import ast.SuperNode;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.runtime.TokenSource;
@@ -32,8 +32,9 @@ public class LangAdaptor implements ParseAdaptor {
                 }
             });
 
-           parser.prog();
-            // System.out.println(tree.toStringTree(parser));
+           ParseTree tree = parser.prog();
+           System.out.println(tree.toStringTree(parser));
+
             if( parser.getNumberOfSyntaxErrors() > 0)
                 return null;
 

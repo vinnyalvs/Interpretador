@@ -3,10 +3,10 @@
    Vinicius Alberto Alves da Silva 201665558C 
 */
 
-package lang.parser;
+package parser;
 
 import java.io.*;
-import lang.ast.SuperNode;
+import ast.SuperNode;
 import lang.parser.*;
 import java.util.List;
 

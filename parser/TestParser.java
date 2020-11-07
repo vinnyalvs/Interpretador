@@ -3,10 +3,10 @@
    Vinicius Alberto Alves da Silva 201665558C 
 */
 
-package lang.parser;
+package parser;
 
 import java.io.*;
-import lang.ast.SuperNode;
+import ast.SuperNode;
 import lang.parser.*;
 import java.util.List;
 
@@ -20,7 +20,8 @@ public class TestParser {
    public TestParser(ParseAdaptor adp){
         this.adp = adp;
         f = new File(okSrcs);
-        runOkTests();
+//        runOkTests();
+        teste();
    }
    
    private String filler(int n){
@@ -56,6 +57,15 @@ public class TestParser {
            }
            
        }catch(Exception e){
+           e.printStackTrace();
+       }
+   }
+
+   public void teste(){
+       try {
+           adp.parseFile("testes/sintaxe/certo/function_call.lan");
+       }
+       catch(Exception e){
            e.printStackTrace();
        }
    }

@@ -3,9 +3,12 @@
    Vinicius Alberto Alves da Silva 201665558C 
 */
 
-package lang.ast;
+package ast;
 
-public class Node extends SuperNode {
+import visitors.Visitor;
+import visitors.Visitable;
+
+public class Node extends SuperNode implements Visitable{
 
     @Override
     public int getLine() {
@@ -16,4 +19,7 @@ public class Node extends SuperNode {
     public int getColumn() {
         return 0;
     }
+
+    @Override
+    public void accept(Visitor v) {}
 }

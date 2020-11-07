@@ -3,7 +3,7 @@
    Vinicius Alberto Alves da Silva 201665558C 
 */
 
-package lang.ast;
+package ast;
 
 public abstract class SuperNode {
 
