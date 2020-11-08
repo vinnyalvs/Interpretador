@@ -19,6 +19,9 @@ public class BinOP extends Expr{
         return r;
     }
 
+    public void setLeft(Expr n){  l = n; }
+    public void setRight(Expr n){ r = n; }
+
     @Override
     public void accept(Visitor v) {v.visit(this);}
 }

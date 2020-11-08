@@ -27,7 +27,7 @@ public class Node extends SuperNode implements Visitable{
     }
 
     @Override
-    public int getColumn() {
+    public int getCol() {
         return column;
     }
 

@@ -17,7 +17,7 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
         int column = ctx.getStart().getCharPositionInLine();
         Program program_node = new Program(line, column);
 
-       /* SuperNode result = this.defaultResult();
+        SuperNode result = this.defaultResult();
         int n = ctx.data().size();
         for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
             ParseTree c = ctx.data(i);
@@ -31,7 +31,7 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
             ParseTree c = ctx.func(i);
             SuperNode childResult = c.accept(this);
             program_node.addFunc((Func) this.aggregateResult(result, childResult));
-        } */
+        }
         return program_node;
     }
 
