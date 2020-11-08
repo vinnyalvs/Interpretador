@@ -1,4 +1,4 @@
-// Generated from Lang.g4 by ANTLR 4.8
+// Generated from /home/vinicius/Compiladores/TesteInterpretador/src/Lang.g4 by ANTLR 4.8
 
 /* Edson Lopes da Silva Júnior 201635023
    Vinicius Alberto Alves da Silva 201665558C  */
@@ -297,18 +297,6 @@ public class LangBaseListener implements LangListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterRelacional(LangParser.RelacionalContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitRelacional(LangParser.RelacionalContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterRexp_aexp(LangParser.Rexp_aexpContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -316,6 +304,18 @@ public class LangBaseListener implements LangListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitRexp_aexp(LangParser.Rexp_aexpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLess_than(LangParser.Less_thanContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLess_than(LangParser.Less_thanContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -1,4 +1,4 @@
-// Generated from Lang.g4 by ANTLR 4.8
+// Generated from /home/vinicius/Compiladores/TesteInterpretador/src/Lang.g4 by ANTLR 4.8
 
 /* Edson Lopes da Silva Júnior 201635023
    Vinicius Alberto Alves da Silva 201665558C  */
@@ -172,19 +172,19 @@ public interface LangVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExp_rexp(LangParser.Exp_rexpContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code relacional}
-	 * labeled alternative in {@link LangParser#rexp}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitRelacional(LangParser.RelacionalContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code rexp_aexp}
 	 * labeled alternative in {@link LangParser#rexp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitRexp_aexp(LangParser.Rexp_aexpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code less_than}
+	 * labeled alternative in {@link LangParser#rexp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitLess_than(LangParser.Less_thanContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code eqeq}
 	 * labeled alternative in {@link LangParser#rexp}.

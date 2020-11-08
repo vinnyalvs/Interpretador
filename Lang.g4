@@ -36,7 +36,7 @@ cmd:	OP_BRACKET  (cmd)* CL_BRACKET #cmdlist
 exp:    exp AND exp #and
     |   rexp #exp_rexp
 ;
-rexp:	aexp RELACIONAL aexp #relacional
+rexp:	aexp RELACIONAL aexp #less_than
     |   rexp EQEQ aexp #eqeq
     |   rexp DIFF aexp #noeq
     |   aexp #rexp_aexp

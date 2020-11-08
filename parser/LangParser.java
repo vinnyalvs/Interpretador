@@ -1,4 +1,4 @@
-// Generated from Lang.g4 by ANTLR 4.8
+// Generated from /home/vinicius/Compiladores/TesteInterpretador/src/Lang.g4 by ANTLR 4.8
 
 /* Edson Lopes da Silva Júnior 201635023
    Vinicius Alberto Alves da Silva 201665558C  */
@@ -1390,29 +1390,6 @@ public class LangParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class RelacionalContext extends RexpContext {
-		public List<AexpContext> aexp() {
-			return getRuleContexts(AexpContext.class);
-		}
-		public AexpContext aexp(int i) {
-			return getRuleContext(AexpContext.class,i);
-		}
-		public TerminalNode RELACIONAL() { return getToken(LangParser.RELACIONAL, 0); }
-		public RelacionalContext(RexpContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof LangListener ) ((LangListener)listener).enterRelacional(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof LangListener ) ((LangListener)listener).exitRelacional(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof LangVisitor ) return ((LangVisitor<? extends T>)visitor).visitRelacional(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class Rexp_aexpContext extends RexpContext {
 		public AexpContext aexp() {
 			return getRuleContext(AexpContext.class,0);
@@ -1429,6 +1406,29 @@ public class LangParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof LangVisitor ) return ((LangVisitor<? extends T>)visitor).visitRexp_aexp(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Less_thanContext extends RexpContext {
+		public List<AexpContext> aexp() {
+			return getRuleContexts(AexpContext.class);
+		}
+		public AexpContext aexp(int i) {
+			return getRuleContext(AexpContext.class,i);
+		}
+		public TerminalNode RELACIONAL() { return getToken(LangParser.RELACIONAL, 0); }
+		public Less_thanContext(RexpContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).enterLess_than(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof LangListener ) ((LangListener)listener).exitLess_than(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof LangVisitor ) return ((LangVisitor<? extends T>)visitor).visitLess_than(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1499,7 +1499,7 @@ public class LangParser extends Parser {
 			switch ( getInterpreter().adaptivePredict(_input,17,_ctx) ) {
 			case 1:
 				{
-				_localctx = new RelacionalContext(_localctx);
+				_localctx = new Less_thanContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
 

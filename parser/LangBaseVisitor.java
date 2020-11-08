@@ -1,4 +1,4 @@
-// Generated from Lang.g4 by ANTLR 4.8
+// Generated from /home/vinicius/Compiladores/TesteInterpretador/src/Lang.g4 by ANTLR 4.8
 
 /* Edson Lopes da Silva Júnior 201635023
    Vinicius Alberto Alves da Silva 201665558C  */
@@ -183,14 +183,14 @@ public class LangBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements L
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitRelacional(LangParser.RelacionalContext ctx) { return visitChildren(ctx); }
+	@Override public T visitRexp_aexp(LangParser.Rexp_aexpContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitRexp_aexp(LangParser.Rexp_aexpContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLess_than(LangParser.Less_thanContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -1,4 +1,4 @@
-// Generated from Lang.g4 by ANTLR 4.8
+// Generated from /home/vinicius/Compiladores/TesteInterpretador/src/Lang.g4 by ANTLR 4.8
 
 /* Edson Lopes da Silva Júnior 201635023
    Vinicius Alberto Alves da Silva 201665558C  */
@@ -279,18 +279,6 @@ public interface LangListener extends ParseTreeListener {
 	 */
 	void exitExp_rexp(LangParser.Exp_rexpContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code relacional}
-	 * labeled alternative in {@link LangParser#rexp}.
-	 * @param ctx the parse tree
-	 */
-	void enterRelacional(LangParser.RelacionalContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code relacional}
-	 * labeled alternative in {@link LangParser#rexp}.
-	 * @param ctx the parse tree
-	 */
-	void exitRelacional(LangParser.RelacionalContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code rexp_aexp}
 	 * labeled alternative in {@link LangParser#rexp}.
 	 * @param ctx the parse tree
@@ -302,6 +290,18 @@ public interface LangListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitRexp_aexp(LangParser.Rexp_aexpContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code less_than}
+	 * labeled alternative in {@link LangParser#rexp}.
+	 * @param ctx the parse tree
+	 */
+	void enterLess_than(LangParser.Less_thanContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code less_than}
+	 * labeled alternative in {@link LangParser#rexp}.
+	 * @param ctx the parse tree
+	 */
+	void exitLess_than(LangParser.Less_thanContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code eqeq}
 	 * labeled alternative in {@link LangParser#rexp}.

@@ -144,15 +144,14 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
     public SuperNode visitExp_rexp(LangParser.Exp_rexpContext ctx) {
         return super.visitExp_rexp(ctx);
     }
-
-    @Override
-    public SuperNode visitRelacional(LangParser.RelacionalContext ctx) {
-        return super.visitRelacional(ctx);
-    }
-
     @Override
     public SuperNode visitRexp_aexp(LangParser.Rexp_aexpContext ctx) {
         return super.visitRexp_aexp(ctx);
+    }
+
+    @Override
+    public SuperNode visitLess_than(LangParser.Less_thanContext ctx) {
+        return super.visitLess_than(ctx);
     }
 
     @Override

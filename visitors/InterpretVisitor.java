@@ -108,17 +108,67 @@ public class InterpretVisitor extends Visitor{
     }
 
     @Override
+    public void visit(If_else e) {
+
+    }
+
+    @Override
     public void visit(Iterate e) {
 
     }
 
     @Override
-    public void visit(Lt e) {
+    public void visit(LessThan e) {
+
+    }
+
+    @Override
+    public void visit(LiteralChar e) {
+
+    }
+
+    @Override
+    public void visit(LiteralFalse e) {
+
+    }
+
+    @Override
+    public void visit(LiteralFloat e) {
+
+    }
+
+    @Override
+    public void visit(LiteralInt e) {
+
+    }
+
+    @Override
+    public void visit(LiteralNull e) {
+
+    }
+
+    @Override
+    public void visit(LiteralTrue e) {
 
     }
 
     @Override
     public void visit(Lvalue e) {
+
+    }
+
+    @Override
+    public void visit(Lvalue_array e) {
+
+    }
+
+    @Override
+    public void visit(Lvalue_dot e) {
+
+    }
+
+    @Override
+    public void visit(Lvalue_id e) {
 
     }
 
@@ -169,6 +219,36 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(Sub e) {
+
+    }
+
+    @Override
+    public void visit(TyArray e) {
+
+    }
+
+    @Override
+    public void visit(TyBool e) {
+
+    }
+
+    @Override
+    public void visit(TyChar e) {
+
+    }
+
+    @Override
+    public void visit(TyFloat e) {
+
+    }
+
+    @Override
+    public void visit(TyInt e) {
+
+    }
+
+    @Override
+    public void visit(TyData e) {
 
     }
 }
