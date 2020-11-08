@@ -92,9 +92,6 @@ ITERATE: 'iterate';
 IF: 'if';
 ELSE: 'else';
 
-//NAME_TYPE : [A-Z]('_'|[0-9]|[a-zA-Z])*;
-ID: [A-Za-z]('_' | [0-9]|[a-zA-Z])*;
-
 
 LITERAL_INT : [0-9]+;
 LITERAL_FLOAT : [0-9]*'.'[0-9]+;
@@ -102,6 +99,9 @@ LITERAL_CHAR : '\'' ( '\\' [btnr"'\\] | ~[\r\n\\"] ) '\'' ;
 LITERAL_TRUE : 'true';
 LITERAL_FALSE : 'false';
 LITERAL_NULL : 'null';
+
+//NAME_TYPE : [A-Z]('_'|[0-9]|[a-zA-Z])*;
+ID: [A-Za-z]('_' | [0-9]|[a-zA-Z])*;
 
 NEWLINE : '\r'? '\n' -> skip;
 WHITESPACE : [ \t]+ -> skip;

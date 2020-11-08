@@ -13,6 +13,8 @@ public class Program extends Node{
     public Program(int line, int column) {
         this.line = line;
         this.column = column;
+        funcs = new ArrayList<Func>();
+        datas = new ArrayList<Data>();
     }
 
     public void addFunc(Func func) {

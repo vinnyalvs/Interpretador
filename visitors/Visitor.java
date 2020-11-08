@@ -16,7 +16,7 @@ public abstract class Visitor {
     public abstract void visit(Diff e);
     public abstract void visit(Div e);
     public abstract void visit(Equal e);
-    public abstract void visit(Expr e);
+//    public abstract void visit(Expr e);
     public abstract void visit(Func e);
     public abstract void visit(If e);
     public abstract void visit(If_else e);

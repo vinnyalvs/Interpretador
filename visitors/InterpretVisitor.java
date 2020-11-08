@@ -48,7 +48,7 @@ public class InterpretVisitor extends Visitor{
             e.getR().accept(this);
             Number esq,dir;
             dir = (Number) operands.pop();
-            esq = (Number)operands.pop();
+            esq = (Number) operands.pop();
             operands.push( new Integer(esq.intValue() +  dir.intValue() ) );
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
@@ -101,7 +101,6 @@ public class InterpretVisitor extends Visitor{
     public void visit(Cmd e) {
 
         try {
-            System.out.println("chamastes");
             e.accept(this);
         }
         catch(Exception x){
@@ -180,21 +179,21 @@ public class InterpretVisitor extends Visitor{
         }
     }
 
-    @Override
-    public void visit(Expr e) {
-
-    }
+//    @Override
+//    public void visit(Expr e) {
+//
+//    }
 
     @Override
     public void visit(Func f) {
-//        HashMap<String,Object> localEnv = new HashMap<String,Object>();
-//        for(int  i = f.getParamList().length-1; i >= 0; i--){
-//            localEnv.put(f.getParamsList()[i].getId(),operands.pop());
-//        }
-//        env.push(localEnv);
-//        f.getBody().accept(this);
-//
-//        env.pop();
+        HashMap<String,Object> localEnv = new HashMap<String,Object>();
+        for(int  i = f.getParamList().getSize()-1; i >= 0; i--){
+//            localEnv.put(f.getParamList()[i].getId(),operands.pop());
+        }
+        env.push(localEnv);
+        f.getBody().accept(this);
+
+        env.pop();
     }
 
     @Override
@@ -257,13 +256,17 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(LiteralChar e) {
-
+        try{
+            operands.push(e.getValue());
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override
     public void visit(LiteralFalse e) {
         try{
-            operands.push(  new Boolean(false));
+            operands.push(  e.getValue());
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
@@ -289,13 +292,17 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(LiteralNull e) {
-
+        try{
+            operands.push(  e.getValue());
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override
     public void visit(LiteralTrue e) {
         try{
-            operands.push(true);
+            operands.push(  e.getValue());
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }

@@ -13,6 +13,8 @@ public class Func extends Node{
     public Func(int line, int col, String id) {
         super (line, col);
         this.id = id;
+        body = new CmdList(line, col);
+        paramList = new ParamList(line, col);
     }
 
     public ParamList getParamList() {

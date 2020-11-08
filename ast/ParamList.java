@@ -10,6 +10,7 @@ public class ParamList extends Node{
 
     public ParamList(int line, int col) {
         super(line, col);
+        type = new ArrayList<Type>();
     }
 
     public ArrayList<Type> getType() {
@@ -18,6 +19,10 @@ public class ParamList extends Node{
 
     public ArrayList<String> getId() {
         return id;
+    }
+
+    public int getSize (){
+        return type.size();
     }
 
     @Override

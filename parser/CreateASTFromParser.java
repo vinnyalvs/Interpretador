@@ -195,7 +195,7 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
     public SuperNode visitPrint(LangParser.PrintContext ctx) {
         int line = ctx.getStart().getLine();
         int column = ctx.getStart().getCharPositionInLine();
-        Expr e = (Expr) ctx.exp().accept(this);
+        Expr e = (Expr)ctx.exp().accept(this);
 
         Print cmdPrint = new Print(line, column, e);
         return cmdPrint;
@@ -292,17 +292,29 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitLiteral_true(LangParser.Literal_trueContext ctx) {
-        return super.visitLiteral_true(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        LiteralTrue litNode = new LiteralTrue(line, column);
+        return litNode;
     }
 
     @Override
     public SuperNode visitLiteral_false(LangParser.Literal_falseContext ctx) {
-        return super.visitLiteral_false(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        LiteralFalse litNode = new LiteralFalse(line, column);
+        return litNode;
     }
 
     @Override
     public SuperNode visitLiteral_null(LangParser.Literal_nullContext ctx) {
-        return super.visitLiteral_null(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        LiteralNull litNode = new LiteralNull(line, column);
+        return litNode;
     }
 
     @Override
@@ -316,12 +328,21 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitLiteral_float(LangParser.Literal_floatContext ctx) {
-        return super.visitLiteral_float(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        LiteralFloat litNode = new LiteralFloat(line, column, Float.parseFloat(ctx.LITERAL_FLOAT().getText()));
+        return litNode;
     }
 
     @Override
     public SuperNode visitLiteral_char(LangParser.Literal_charContext ctx) {
-        return super.visitLiteral_char(ctx);
+
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        LiteralChar litNode = new LiteralChar(line, column, ctx.LITERAL_CHAR().getText().charAt(1));
+        return litNode;
     }
 
     @Override

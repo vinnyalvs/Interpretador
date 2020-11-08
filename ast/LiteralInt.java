@@ -1,5 +1,7 @@
 package ast;
 
+import visitors.Visitor;
+
 public class LiteralInt extends Expr {
     private int value;
 
@@ -11,4 +13,7 @@ public class LiteralInt extends Expr {
         super(line, col);
         this.value = value;
     }
+
+    @Override
+    public void accept(Visitor v) {v.visit(this);}
 }
