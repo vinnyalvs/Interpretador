@@ -5,8 +5,8 @@
 
 package parser;
 
-import lang.parser.LangLexer;
-import lang.parser.LangParser;
+import parser.LangLexer;
+import parser.LangParser;
 import ast.Node;
 import ast.SuperNode;
 import org.antlr.v4.runtime.*;
@@ -32,11 +32,16 @@ public class LangAdaptor implements ParseAdaptor {
                 }
             });
 
-           ParseTree tree = parser.prog();
-           System.out.println(tree.toStringTree(parser));
-
             if( parser.getNumberOfSyntaxErrors() > 0)
                 return null;
+
+            CreateASTFromParser antlr_visitor = new CreateASTFromParser();
+
+            SuperNode s = antlr_visitor.visit(parser.prog());
+
+            System.out.println("Resultado");
+
+            System.out.println(s.toString());
 
             SuperNode node = new Node();
 

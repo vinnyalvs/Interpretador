@@ -7,7 +7,6 @@ package parser;
 
 import java.io.*;
 import ast.SuperNode;
-import lang.parser.*;
 import java.util.List;
 
 // Adaptador para classe de parser. a Função parseFile deve retornar null caso o parser resulte em erro. 
@@ -63,7 +62,7 @@ public class TestParser {
 
    public void teste(){
        try {
-           adp.parseFile("testes/sintaxe/certo/function_call.lan");
+           adp.parseFile("/home/vinicius/Compiladores/TesteInterpretador/src/testes/sintaxe/certo/function_call.lan");
        }
        catch(Exception e){
            e.printStackTrace();

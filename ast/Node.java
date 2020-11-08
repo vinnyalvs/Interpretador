@@ -10,14 +10,25 @@ import visitors.Visitable;
 
 public class Node extends SuperNode implements Visitable{
 
+    int line;
+    int column;
+
+    @Override
+    public String toString() {
+        return "Node{" +
+                "line=" + line +
+                ", column=" + column +
+                '}';
+    }
+
     @Override
     public int getLine() {
-        return 0;
+        return line;
     }
 
     @Override
     public int getColumn() {
-        return 0;
+        return column;
     }
 
     @Override

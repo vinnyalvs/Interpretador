@@ -2,15 +2,32 @@ package ast;
 
 import visitors.Visitor;
 
-public class Program extends Node{
-    Func[] funcs;
-    Data[] datas;
+import java.util.ArrayList;
 
-    public Func[] getFuncs() {
+public class Program extends Node{
+    ArrayList<Func> funcs;
+    ArrayList<Data> datas;
+
+
+
+    public Program(int line, int column) {
+        this.line = line;
+        this.column = column;
+    }
+
+    public void addFunc(Func func) {
+        this.funcs.add(func);
+    }
+
+    public void addData(Data data) {
+        this.datas.add(data);
+    }
+
+    public ArrayList<Func> getFuncs() {
         return funcs;
     }
 
-    public Data[] getDatas() {
+    public ArrayList<Data> getDatas() {
         return datas;
     }
 

@@ -28,7 +28,7 @@ public class LangCompiler{
           System.out.println(" -dti: Verificar tipos, imprimir o ambiente de tipos e depois interpretar");
           System.out.println(" -gvz: Create a dot file. (Feed it to graphviz dot tool to generate graphical representation of the AST)");
           
-       }
+       } else
        try{
 	   ParseAdaptor langParser = new LangAdaptor();
           
