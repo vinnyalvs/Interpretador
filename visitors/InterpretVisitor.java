@@ -138,7 +138,7 @@ public class InterpretVisitor extends Visitor{
     }
 
     @Override
-    public void visit(Neq e) {
+    public void visit(Noeq e) {
 
     }
 

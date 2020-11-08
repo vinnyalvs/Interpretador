@@ -23,7 +23,7 @@ public abstract class Visitor {
     public abstract void visit(Minus e);
     public abstract void visit(Mod e);
     public abstract void visit(Mul e);
-    public abstract void visit(Neq e);
+    public abstract void visit(Noeq e);
     public abstract void visit(Param e);
     public abstract void visit(Print e);
     public abstract void visit(Program e);

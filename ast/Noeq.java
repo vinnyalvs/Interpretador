@@ -2,8 +2,8 @@ package ast;
 
 import visitors.Visitor;
 
-public class Neq extends BinOP{
-    public Neq(Expr l, Expr r) {
+public class Noeq extends BinOP{
+    public Noeq(Expr l, Expr r) {
         super(l, r);
     }
 

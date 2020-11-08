@@ -3,8 +3,8 @@ package ast;
 import visitors.Visitor;
 
 //Less Than
-public class Lt extends BinOP{
-    public Lt(Expr l, Expr r) {
+public class LessThan extends BinOP{
+    public LessThan(Expr l, Expr r) {
         super(l, r);
     }
 
