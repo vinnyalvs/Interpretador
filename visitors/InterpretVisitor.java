@@ -47,9 +47,9 @@ public class InterpretVisitor extends Visitor{
             e.getL().accept(this);
             e.getR().accept(this);
             Number esq,dir;
-            dir = (Number) operands.pop();
-            esq = (Number) operands.pop();
-            operands.push( new Integer(esq.intValue() +  dir.intValue() ) );
+            dir = (Integer) operands.pop();
+            esq = (Integer) operands.pop();
+            operands.push( new Integer (esq.intValue() + dir.intValue()) );
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
@@ -72,7 +72,12 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(Attr e) {
-
+        try{
+            e.getE().accept(this);
+            env.peek().put(e.getLv().getId(), operands.pop());
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override
@@ -325,7 +330,15 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(Lvalue_id e) {
-
+        try{
+            Object r = env.peek().get(e.getId());
+            if(r != null){
+                operands.push(r);
+            }
+            else{throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") variável não declarada " +e.getId() );}
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override

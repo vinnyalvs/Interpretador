@@ -2,16 +2,12 @@ package ast;
 
 import visitors.Visitor;
 
-public class Lvalue extends Expr{
-    Expr e;
+public abstract class Lvalue extends Expr{
     String id;
 
-    public Lvalue(int line, int col) {
+    public Lvalue(int line, int col, String id) {
         super(line, col);
-    }
-
-    public Expr getE() {
-        return e;
+        this.id = id;
     }
 
     public String getId() {
