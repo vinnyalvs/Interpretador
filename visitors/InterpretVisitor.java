@@ -25,8 +25,9 @@ public class InterpretVisitor extends Visitor{
     public void visit(Program e) {
         Node main = null;
 
-        for (Data d : e.getDatas())
-            datas.put(d.getId(), d);
+        if (e.getDatas() != null)
+            for (Data d : e.getDatas())
+                datas.put(d.getId(), d);
 
         for (Func f : e.getFuncs())
         {
@@ -45,10 +46,10 @@ public class InterpretVisitor extends Visitor{
         try{
             e.getL().accept(this);
             e.getR().accept(this);
-            Expr esq,dir;
-            dir = (Expr) operands.pop();
-            esq = (Expr)operands.pop();
-            operands.push( new Integer(esq +  dir ) );
+            Number esq,dir;
+            dir = (Number) operands.pop();
+            esq = (Number)operands.pop();
+            operands.push( new Integer(esq.intValue() +  dir.intValue() ) );
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
@@ -75,14 +76,12 @@ public class InterpretVisitor extends Visitor{
     }
 
     @Override
-    public void visit(BinOP e) {
-
-    }
+    public void visit(BinOP e) {}
 
     @Override
     public void visit(Call e) {
         try{
-            Func f = funcs.get(e.getName());
+            Func f = funcs.get(e.getId());
             if(f != null){
                 for(Expr exp : e.getArgs()){
                     exp.accept(this);
@@ -90,10 +89,33 @@ public class InterpretVisitor extends Visitor{
                 f.accept(this);
 
             }else{
-                throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") Função não definida " +  e.getName());
+                throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") Função não definida " +  e.getId());
             }
 
         }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
+    }
+
+    @Override
+    public void visit(Cmd e) {
+
+        try {
+            System.out.println("chamastes");
+            e.accept(this);
+        }
+        catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
+    }
+
+    @Override
+    public void visit(CmdList e) {
+        try {
+            for (Cmd cmd : e.getCmdList())
+                cmd.accept(this);
+        }
+        catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
     }
@@ -164,14 +186,21 @@ public class InterpretVisitor extends Visitor{
     }
 
     @Override
-    public void visit(Func e) {
-
+    public void visit(Func f) {
+//        HashMap<String,Object> localEnv = new HashMap<String,Object>();
+//        for(int  i = f.getParamList().length-1; i >= 0; i--){
+//            localEnv.put(f.getParamsList()[i].getId(),operands.pop());
+//        }
+//        env.push(localEnv);
+//        f.getBody().accept(this);
+//
+//        env.pop();
     }
 
     @Override
     public void visit(If e) {
         try{
-            e.getTeste().accept(this);
+            e.getTest().accept(this);
             if((Boolean)operands.pop()){
                 e.getThen().accept(this);
             }
@@ -183,7 +212,7 @@ public class InterpretVisitor extends Visitor{
     @Override
     public void visit(If_else e) {
         try{
-            e.getTeste().accept(this);
+            e.getTest().accept(this);
             if((Boolean)operands.pop()){
                 e.getThen().accept(this);
             }else if(e.getElse() != null){
@@ -222,6 +251,11 @@ public class InterpretVisitor extends Visitor{
     }
 
     @Override
+    public void visit(LiteralBool e) {
+
+    }
+
+    @Override
     public void visit(LiteralChar e) {
 
     }
@@ -238,7 +272,7 @@ public class InterpretVisitor extends Visitor{
     @Override
     public void visit(LiteralFloat e) {
         try{
-            operands.push( new Float(e.getValue() ));
+            operands.push( e.getValue() );
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
@@ -247,7 +281,7 @@ public class InterpretVisitor extends Visitor{
     @Override
     public void visit(LiteralInt e) {
         try{
-            operands.push( new Integer(e.getValue()) );
+            operands.push( e.getValue() );
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
@@ -261,7 +295,7 @@ public class InterpretVisitor extends Visitor{
     @Override
     public void visit(LiteralTrue e) {
         try{
-            operands.push(  new Boolean(true));
+            operands.push(true);
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
@@ -327,7 +361,7 @@ public class InterpretVisitor extends Visitor{
     }
 
     @Override
-    public void visit(Param e) {
+    public void visit(ParamList e) {
 
     }
 

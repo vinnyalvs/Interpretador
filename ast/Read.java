@@ -2,8 +2,12 @@ package ast;
 
 import visitors.Visitor;
 
-public class Read extends Node{
+public class Read extends Cmd{
 
+    public Read(int line, int col, Lvalue lv) {
+        super(line, col);
+        this.lv = lv;
+    }
 
     Lvalue lv;
 

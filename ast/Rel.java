@@ -3,8 +3,9 @@ package ast;
 import visitors.Visitor;
 
 public class Rel extends BinOP {
-    public Rel(Expr l, Expr r) {
-        super(l, r);
+
+    public Rel(int line, int col, Expr l, Expr r) {
+        super(line, col, l, r);
     }
 
     @Override

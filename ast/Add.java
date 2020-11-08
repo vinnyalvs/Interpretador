@@ -4,8 +4,8 @@ import visitors.Visitor;
 
 public class Add extends BinOP {
 
-    public Add(Expr l, Expr r) {
-        super(l, r);
+    public Add(int line, int col, Expr l, Expr r) {
+        super(line, col, l, r);
     }
 
     public String toString(){

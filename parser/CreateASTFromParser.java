@@ -1,13 +1,9 @@
 package parser;
 
 import ast.*;
-import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.RuleNode;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
-import java.util.HashMap;
-import java.util.Stack;
+import java.util.ArrayList;
 
 public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
@@ -19,11 +15,11 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
         SuperNode result = this.defaultResult();
         int n = ctx.data().size();
-        for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
-            ParseTree c = ctx.data(i);
-            SuperNode childResult = c.accept(this);
-            program_node.addData((Data) this.aggregateResult(result, childResult));
-        }
+//        for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
+//            ParseTree c = ctx.data(i);
+//            SuperNode childResult = c.accept(this);
+//            program_node.addData((Data) this.aggregateResult(result, childResult));
+//        }
 
         result = this.defaultResult();
         n = ctx.func().size();
@@ -34,6 +30,19 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
         }
         return program_node;
     }
+
+//    @Override
+////    public SuperNode aggregateResult(SuperNode aggregate, SuperNode nextResult) {
+//////        if (aggregate == null) {
+//////            return nextResult;
+//////        }
+////
+////        if (nextResult == null) {
+////            return aggregate;
+////        }
+////
+////        return new Node(nextResult.getLine(), nextResult.getCol());
+////    }
 
     @Override
     public SuperNode visitData(LangParser.DataContext ctx) {
@@ -47,17 +56,68 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitFunc(LangParser.FuncContext ctx) {
-        return super.visitFunc(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        Func funcNode = new Func(line, column, ctx.ID().getText());
+        ParamList prms = null;
+        if(ctx.params()!= null) {
+            prms = (ParamList) ctx.params().accept(this);
+            funcNode.setParamList(prms);
+        }
+
+        SuperNode result = this.defaultResult();
+        int n = ctx.type().size();
+        for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
+            ParseTree c = ctx.type(i);
+            SuperNode childResult = c.accept(this);
+            funcNode.addReturn((Type) this.aggregateResult(result, childResult));
+        }
+
+        result = this.defaultResult();
+        n = ctx.cmd().size();
+        for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
+            ParseTree c = ctx.cmd(i);
+            SuperNode childResult = c.accept(this);
+            funcNode.addCmd((Cmd) this.aggregateResult(result, childResult));
+        }
+
+        return funcNode;
     }
 
     @Override
     public SuperNode visitParams(LangParser.ParamsContext ctx) {
-        return super.visitParams(ctx);
+//        int line = ctx.getStart().getLine();
+//        int column = ctx.getStart().getCharPositionInLine();
+//        ParamList paramsNode = new ParamList(line, column);
+//
+//        SuperNode result = this.defaultResult();
+//        ctx.
+//        int n = ctx.param().size();
+//        for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
+//            ParseTree c = ctx.param(i);
+//            SuperNode childResult = c.accept(this);
+//            paramsNode.appendParam((Param) this.aggregateResult(result, childResult));
+//        }
+//
+//        //return super.visitParams(ctx);
+//        return paramsNode;
+        return null;
     }
+
 
     @Override
     public SuperNode visitType_array(LangParser.Type_arrayContext ctx) {
-        return super.visitType_array(ctx);
+
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        Type t;
+        TyArray ta;
+
+        t = (Type) ctx.type().accept(this);
+
+        ta = new TyArray(line, column, t);
+
+        return ta;
     }
 
     @Override
@@ -67,27 +127,43 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitType_int(LangParser.Type_intContext ctx) {
-        return super.visitType_int(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        TyInt t = new TyInt(line, column);
+        return t;
     }
 
     @Override
-    public SuperNode visitType_char(LangParser.Type_charContext ctx) {
-        return super.visitType_char(ctx);
+    public SuperNode visitType_char(LangParser.Type_charContext ctx){
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        TyChar t = new TyChar(line, column);
+        return t;
     }
 
     @Override
     public SuperNode visitType_bool(LangParser.Type_boolContext ctx) {
-        return super.visitType_bool(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        TyBool t = new TyBool(line, column);
+        return t;
     }
 
     @Override
-    public SuperNode visitType_float(LangParser.Type_floatContext ctx) {
-        return super.visitType_float(ctx);
+    public SuperNode visitType_float(LangParser.Type_floatContext ctx){
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        TyBool t = new TyBool(line, column);
+        return t;
     }
 
     @Override
     public SuperNode visitType_data(LangParser.Type_dataContext ctx) {
-        return super.visitType_data(ctx);
+
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        TyBool t = new TyBool(line, column);
+        return t;
     }
 
     @Override
@@ -117,7 +193,12 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitPrint(LangParser.PrintContext ctx) {
-        return super.visitPrint(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        Expr e = (Expr) ctx.exp().accept(this);
+
+        Print cmdPrint = new Print(line, column, e);
+        return cmdPrint;
     }
 
     @Override
@@ -226,7 +307,11 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitLiteral_int(LangParser.Literal_intContext ctx) {
-        return super.visitLiteral_int(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        LiteralInt litNode = new LiteralInt(line, column, Integer.parseInt(ctx.LITERAL_INT().getText()));
+        return litNode;
     }
 
     @Override

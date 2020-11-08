@@ -8,12 +8,13 @@ package parser;
 import parser.LangLexer;
 import parser.LangParser;
 import ast.Node;
-import ast.SuperNode;
+import ast.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.runtime.TokenSource;
 
 import java.io.IOException;
+import visitors.*;
 
 
 public class LangAdaptor implements ParseAdaptor {
@@ -39,6 +40,10 @@ public class LangAdaptor implements ParseAdaptor {
 
             SuperNode s = antlr_visitor.visit(parser.prog());
 
+            InterpretVisitor iv = new InterpretVisitor();
+
+            ((Node)s).accept(iv);
+
             System.out.println("Resultado");
 
             System.out.println(s.toString());
@@ -50,6 +55,7 @@ public class LangAdaptor implements ParseAdaptor {
 
         }
         catch(RuntimeException e) {
+            System.out.println(e.getMessage());
             return null;
         }
 

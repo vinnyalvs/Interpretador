@@ -2,14 +2,14 @@ package ast;
 
 import visitors.Visitor;
 
-public class Call extends Expr{
+public class Call extends Cmd{
     private String id;
     private Expr[] args;
     private Lvalue[] idRet;
 
-    public Call(String name, Expr[] args){
-        this.id = name;
-        this.args = args;
+    public Call(int line, int col, String id) {
+        super(line, col);
+        this.id = id;
     }
 
     public String getId() {

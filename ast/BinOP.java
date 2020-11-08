@@ -6,7 +6,8 @@ public class BinOP extends Expr{
     Expr l;
     Expr r;
 
-    public BinOP(Expr l, Expr r) {
+    public BinOP(int line, int col, Expr l, Expr r) {
+        super(line, col);
         this.l = l;
         this.r = r;
     }

@@ -6,6 +6,10 @@ public class Lvalue extends Expr{
     Expr e;
     String id;
 
+    public Lvalue(int line, int col) {
+        super(line, col);
+    }
+
     public Expr getE() {
         return e;
     }

@@ -6,6 +6,10 @@ public class Lvalue_dot extends Lvalue{
     Expr e;
     String id;
 
+    public Lvalue_dot(int line, int col) {
+        super(line, col);
+    }
+
     public Expr getE() {
         return e;
     }

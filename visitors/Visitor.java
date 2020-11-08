@@ -8,6 +8,8 @@ public abstract class Visitor {
     public abstract void visit(Attr e);
     public abstract void visit(BinOP e);
     public abstract void visit(Call e);
+    public abstract void visit(Cmd e);
+    public abstract void visit(CmdList e);
     public abstract void visit(Data e);
     public abstract void visit(Decl e);
     public abstract void visit(Deny e);
@@ -20,6 +22,7 @@ public abstract class Visitor {
     public abstract void visit(If_else e);
     public abstract void visit(Iterate e);
     public abstract void visit(LessThan e);
+    public abstract void visit(LiteralBool e);
     public abstract void visit(LiteralChar e);
     public abstract void visit(LiteralFalse e);
     public abstract void visit(LiteralFloat e);
@@ -34,7 +37,7 @@ public abstract class Visitor {
     public abstract void visit(Mod e);
     public abstract void visit(Mul e);
     public abstract void visit(Noeq e);
-    public abstract void visit(Param e);
+    public abstract void visit(ParamList e);
     public abstract void visit(Print e);
     public abstract void visit(Program e);
     public abstract void visit(Read e);

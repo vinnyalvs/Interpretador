@@ -13,6 +13,13 @@ public class Node extends SuperNode implements Visitable{
     int line;
     int column;
 
+    public Node(int line, int col) {
+        this.line = line;
+        this.column = col;
+    }
+
+    public Node(){}
+
     @Override
     public String toString() {
         return "Node{" +

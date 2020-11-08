@@ -3,8 +3,9 @@ package ast;
 import visitors.Visitor;
 
 public class Diff extends BinOP{
-    public Diff(Expr l, Expr r) {
-        super(l, r);
+
+    public Diff(int line, int col, Expr l, Expr r) {
+        super(line, col, l, r);
     }
 
     @Override

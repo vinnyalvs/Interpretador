@@ -7,6 +7,10 @@ import visitors.Visitor;
 public class Minus extends Expr{
     Expr e;
 
+    public Minus(int line, int col) {
+        super(line, col);
+    }
+
     public Expr getE() {
         return e;
     }

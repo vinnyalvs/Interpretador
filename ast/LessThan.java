@@ -4,8 +4,9 @@ import visitors.Visitor;
 
 //Less Than
 public class LessThan extends BinOP{
-    public LessThan(Expr l, Expr r) {
-        super(l, r);
+
+    public LessThan(int line, int col, Expr l, Expr r) {
+        super(line, col, l, r);
     }
 
     @Override

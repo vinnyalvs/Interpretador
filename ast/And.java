@@ -3,8 +3,9 @@ package ast;
 import visitors.Visitor;
 
 public class And extends BinOP{
-    public And(Expr l, Expr r) {
-        super(l, r);
+
+    public And(int line, int col, Expr l, Expr r) {
+        super(line, col, l, r);
     }
 
     @Override
