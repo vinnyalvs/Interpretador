@@ -249,9 +249,8 @@ public class InterpretVisitor extends Visitor{
     public void visit(Iterate e) {
         try{
             e.getTest().accept(this);
-            while( (Boolean)operands.pop()){
+            while( (Boolean)operands.peek()){
                 e.getBody().accept(this);
-                e.getTest().accept(this);
             }
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );

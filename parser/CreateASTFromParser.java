@@ -198,7 +198,13 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitIterate(LangParser.IterateContext ctx) {
-        return super.visitIterate(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        Expr e = (Expr)ctx.exp().accept(this);
+        Cmd body = (Cmd)ctx.cmd().accept(this);
+        Iterate node_iterate = new Iterate(line,column,e,body);
+
+        return node_iterate;
     }
 
     @Override
