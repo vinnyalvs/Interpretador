@@ -1,4 +1,4 @@
 main(){
-
-
+  iterate(true)
+    print 10;
 }
