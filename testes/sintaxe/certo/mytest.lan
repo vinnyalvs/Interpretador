@@ -1,7 +1,13 @@
+
+
+
+
+
 main(){
-  x = 3;
-  iterate(x < 10) {
-    print x;
-    x = x + 1;
-   }
+   numerador::Int;
+  x = 1;
+  if(x < 3)
+    if(x < 2)
+        y = 10;
+    print y;
 }

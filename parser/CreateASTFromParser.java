@@ -167,7 +167,7 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
         int line = ctx.getStart().getLine();
         int column = ctx.getStart().getCharPositionInLine();
-        TyData t = new TyData(line, column);
+        TyData t = new TyData(line, column, ctx.ID().getText());
         return t;
     }
 

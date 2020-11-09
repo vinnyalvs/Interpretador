@@ -111,7 +111,6 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(Cmd e) {
-
         try {
             e.accept(this);
         }
