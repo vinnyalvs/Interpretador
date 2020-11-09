@@ -153,7 +153,7 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
     public SuperNode visitType_float(LangParser.Type_floatContext ctx){
         int line = ctx.getStart().getLine();
         int column = ctx.getStart().getCharPositionInLine();
-        TyBool t = new TyBool(line, column);
+        TyFloat t = new TyFloat(line, column);
         return t;
     }
 
@@ -162,7 +162,7 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
         int line = ctx.getStart().getLine();
         int column = ctx.getStart().getCharPositionInLine();
-        TyBool t = new TyBool(line, column);
+        TyData t = new TyData(line, column);
         return t;
     }
 
@@ -225,7 +225,14 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitAnd(LangParser.AndContext ctx) {
-        return super.visitAnd(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Expr esq = (Expr)ctx.exp().get(0).accept(this);
+        Expr dir = (Expr)ctx.exp().get(1).accept(this);
+
+        And node = new And(line, column, esq, dir);
+        return node;
     }
 
     @Override
@@ -239,17 +246,38 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitLess_than(LangParser.Less_thanContext ctx) {
-        return super.visitLess_than(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Expr esq = (Expr)ctx.aexp().get(0).accept(this);
+        Expr dir = (Expr)ctx.aexp().get(1).accept(this);
+
+        LessThan node = new LessThan(line, column, esq, dir);
+        return node;
     }
 
     @Override
     public SuperNode visitEqeq(LangParser.EqeqContext ctx) {
-        return super.visitEqeq(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Expr esq = (Expr)ctx.rexp().accept(this);
+        Expr dir = (Expr)ctx.aexp().accept(this);
+
+        Equal node = new Equal(line, column, esq, dir);
+        return node;
     }
 
     @Override
     public SuperNode visitNoeq(LangParser.NoeqContext ctx) {
-        return super.visitNoeq(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Expr esq = (Expr)ctx.rexp().accept(this);
+        Expr dir = (Expr)ctx.aexp().accept(this);
+
+        Noeq node = new Noeq(line, column, esq, dir);
+        return node;
     }
 
     @Override
@@ -260,13 +288,20 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
         Expr esq = (Expr)ctx.aexp().accept(this);
         Expr dir = (Expr)ctx.mexp().accept(this);
 
-        Add add = new Add(line, column, esq, dir);
-        return add;
+        Add node = new Add(line, column, esq, dir);
+        return node;
     }
 
     @Override
     public SuperNode visitDiff(LangParser.DiffContext ctx) {
-        return super.visitDiff(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Expr esq = (Expr)ctx.aexp().accept(this);
+        Expr dir = (Expr)ctx.mexp().accept(this);
+
+        Diff node = new Diff(line, column, esq, dir);
+        return node;
     }
 
     @Override
@@ -276,17 +311,38 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitDiv(LangParser.DivContext ctx) {
-        return super.visitDiv(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Expr esq = (Expr)ctx.mexp().accept(this);
+        Expr dir = (Expr)ctx.sexp().accept(this);
+
+        Div node = new Div(line, column, esq, dir);
+        return node;
     }
 
     @Override
     public SuperNode visitMod(LangParser.ModContext ctx) {
-        return super.visitMod(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Expr esq = (Expr)ctx.mexp().accept(this);
+        Expr dir = (Expr)ctx.sexp().accept(this);
+
+        Mod node = new Mod(line, column, esq, dir);
+        return node;
     }
 
     @Override
     public SuperNode visitMul(LangParser.MulContext ctx) {
-        return super.visitMul(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Expr esq = (Expr)ctx.mexp().accept(this);
+        Expr dir = (Expr)ctx.sexp().accept(this);
+
+        Mul node = new Mul(line, column, esq, dir);
+        return node;
     }
 
     @Override
@@ -296,12 +352,24 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitDeny(LangParser.DenyContext ctx) {
-        return super.visitDeny(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Expr e = (Expr)ctx.sexp().accept(this);
+
+        Deny node = new Deny(line, column, e);
+        return node;
     }
 
     @Override
     public SuperNode visitMinus(LangParser.MinusContext ctx) {
-        return super.visitMinus(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Expr e = (Expr)ctx.sexp().accept(this);
+
+        Minus node = new Minus(line, column, e);
+        return node;
     }
 
     @Override
@@ -371,7 +439,8 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitParenthesis_exp(LangParser.Parenthesis_expContext ctx) {
-        return super.visitParenthesis_exp(ctx);
+        Expr e = (Expr) ctx.exp().accept(this);
+        return e;
     }
 
     @Override

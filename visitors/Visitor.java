@@ -22,7 +22,6 @@ public abstract class Visitor {
     public abstract void visit(If_else e);
     public abstract void visit(Iterate e);
     public abstract void visit(LessThan e);
-    public abstract void visit(LiteralBool e);
     public abstract void visit(LiteralChar e);
     public abstract void visit(LiteralFalse e);
     public abstract void visit(LiteralFloat e);

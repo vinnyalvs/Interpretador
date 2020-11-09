@@ -47,9 +47,14 @@ public class InterpretVisitor extends Visitor{
             e.getL().accept(this);
             e.getR().accept(this);
             Number esq,dir;
-            dir = (Integer) operands.pop();
-            esq = (Integer) operands.pop();
-            operands.push( new Integer (esq.intValue() + dir.intValue()) );
+
+            dir = e.toNumber(operands.pop());
+            esq = e.toNumber(operands.pop());
+
+            if ((dir instanceof Float) || (esq instanceof Float))
+                operands.push( new Float (esq.floatValue() + dir.floatValue()) );
+            else
+                operands.push( new Integer (esq.intValue() + dir.intValue()) );
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
@@ -150,9 +155,14 @@ public class InterpretVisitor extends Visitor{
             e.getL().accept(this);
             e.getR().accept(this);
             Number esq,dir;
-            dir = (Number)operands.pop();
-            esq = (Number)operands.pop();
-            operands.push( new Integer(esq.intValue() -  dir.intValue() ) );
+
+            dir = e.toNumber(operands.pop());
+            esq = e.toNumber(operands.pop());
+
+            if ((dir instanceof Float) || (esq instanceof Float))
+                operands.push( new Float (esq.floatValue() - dir.floatValue()) );
+            else
+                operands.push( new Integer (esq.intValue() - dir.intValue()) );
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
@@ -164,10 +174,15 @@ public class InterpretVisitor extends Visitor{
         try{
             e.getL().accept(this);
             e.getR().accept(this);
-            Number esq, dir;
-            dir = (Number)operands.pop();
-            esq = (Number)operands.pop();
-            operands.push( new Float(esq.intValue() /  dir.intValue() ) );
+            Number esq,dir;
+
+            dir = e.toNumber(operands.pop());
+            esq = e.toNumber(operands.pop());
+
+            if ((dir instanceof Float) || (esq instanceof Float))
+                operands.push( new Float (esq.floatValue() / dir.floatValue()) );
+            else
+                operands.push( new Integer (esq.intValue() / dir.intValue()) );
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
@@ -178,16 +193,19 @@ public class InterpretVisitor extends Visitor{
         try{
             e.getL().accept(this);
             e.getR().accept(this);
-            operands.push( new Boolean( operands.pop().equals(operands.pop()) ) );
+            Number esq,dir;
+
+            dir = e.toNumber(operands.pop());
+            esq = e.toNumber(operands.pop());
+
+            if ((dir instanceof Float) || (esq instanceof Float))
+                operands.push( new Boolean (esq.floatValue() == dir.floatValue()) );
+            else
+                operands.push( new Boolean (esq.intValue() == dir.intValue()) );
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
     }
-
-//    @Override
-//    public void visit(Expr e) {
-//
-//    }
 
     @Override
     public void visit(Func f) {
@@ -245,18 +263,13 @@ public class InterpretVisitor extends Visitor{
         try{
             e.getL().accept(this);
             e.getR().accept(this);
-            Object esq,dir;
-            dir = operands.pop();
-            esq = operands.pop();
+            Number esq,dir;
+            dir = e.toNumber(operands.pop());
+            esq = e.toNumber(operands.pop());
             operands.push( new Boolean( (Integer)esq <  (Integer)dir ) );
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
-    }
-
-    @Override
-    public void visit(LiteralBool e) {
-
     }
 
     @Override
@@ -343,7 +356,18 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(Minus e) {
+        try{
+            e.getE().accept(this);
 
+            Number num = e.toNumber(operands.pop());
+
+            if (num instanceof Float)
+                operands.push( new Float (-1 * num.floatValue()) );
+            else
+                operands.push( new Integer (-1 * num.intValue()) );
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override
@@ -351,10 +375,16 @@ public class InterpretVisitor extends Visitor{
         try{
             e.getL().accept(this);
             e.getR().accept(this);
-            Number esq, dir;
-            dir = (Number)operands.pop();
-            esq = (Number)operands.pop();
-            operands.push( new Integer(esq.intValue() %  dir.intValue() ) );
+            Number esq,dir;
+
+            dir = (Integer) operands.pop();
+            esq = (Integer) operands.pop();
+
+            if (!(dir instanceof Integer) || !(esq instanceof Integer))
+                throw new RuntimeException("os valores usados na operacao % (mod) devem ser inteiros!");
+
+            operands.push( new Integer (esq.intValue() % dir.intValue()) );
+
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
@@ -366,18 +396,36 @@ public class InterpretVisitor extends Visitor{
             e.getL().accept(this);
             e.getR().accept(this);
             Number esq,dir;
-            dir = (Number)operands.pop();
-            esq = (Number)operands.pop();
-            operands.push( new Integer(esq.intValue() *  dir.intValue() ) );
+
+            dir = e.toNumber(operands.pop());
+            esq = e.toNumber(operands.pop());
+
+            if ((dir instanceof Float) || (esq instanceof Float))
+                operands.push( new Float (esq.floatValue() * dir.floatValue()) );
+            else
+                operands.push( new Integer (esq.intValue() * dir.intValue()) );
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
-
     }
 
     @Override
     public void visit(Noeq e) {
+        try{
+            e.getL().accept(this);
+            e.getR().accept(this);
+            Number esq,dir;
 
+            dir = e.toNumber(operands.pop());
+            esq = e.toNumber(operands.pop());
+
+            if ((dir instanceof Float) || (esq instanceof Float))
+                operands.push( new Boolean (esq.floatValue() != dir.floatValue()) );
+            else
+                operands.push( new Boolean (esq.intValue() != dir.intValue()) );
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override

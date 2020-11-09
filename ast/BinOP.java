@@ -23,6 +23,22 @@ public class BinOP extends Expr{
     public void setLeft(Expr n){  l = n; }
     public void setRight(Expr n){ r = n; }
 
+    public Number toNumber (Object o)
+    {
+        try{
+            Number num;
+            if (o instanceof Character) {
+                char c = (Character) o;
+                num = (int) c;
+            }
+            else
+                num = (Number) o;
+            return num;
+        }catch(Exception x){
+            throw new RuntimeException( x.getMessage() );
+        }
+    }
+
     @Override
     public void accept(Visitor v) {v.visit(this);}
 }

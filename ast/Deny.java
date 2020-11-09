@@ -5,8 +5,9 @@ import visitors.Visitor;
 public class Deny extends Expr{
     Expr expr;
 
-    public Deny(int line, int col) {
+    public Deny(int line, int col, Expr expr) {
         super(line, col);
+        this.expr = expr;
     }
 
     public Expr getExpr() {
