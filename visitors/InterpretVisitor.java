@@ -310,12 +310,16 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(LiteralNull e) {
+
+
         try{
             operands.push(  e.getValue());
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
     }
+
+
 
     @Override
     public void visit(LiteralTrue e) {
@@ -345,7 +349,7 @@ public class InterpretVisitor extends Visitor{
     public void visit(Lvalue_id e) {
         try{
             Object r = env.peek().get(e.getId());
-            if(r != null){
+            if(r != null || (r == null && env.peek().containsKey(e.getId()))){
                 operands.push(r);
             }
             else{throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") variável não declarada " +e.getId() );}
@@ -437,7 +441,7 @@ public class InterpretVisitor extends Visitor{
     public void visit(Print e) {
         try{
             e.getExpr().accept(this);
-            System.out.println(operands.pop().toString());
+            System.out.println(operands.pop());
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
