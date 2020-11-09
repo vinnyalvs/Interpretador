@@ -6,6 +6,12 @@ public class Decl extends Node{
     String id;
     Type type;
 
+    public Decl(int line, int col, String id, Type type) {
+        super(line, col);
+        this.id = id;
+        this.type = type;
+    }
+
     public String getId() {
         return id;
     }

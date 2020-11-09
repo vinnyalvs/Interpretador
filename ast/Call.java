@@ -2,10 +2,12 @@ package ast;
 
 import visitors.Visitor;
 
+import java.util.ArrayList;
+
 public class Call extends Cmd{
     private String id;
-    private Expr[] args;
-    private Lvalue[] idRet;
+    ArrayList<Expr> exprs;
+    ArrayList<Lvalue> rets;
 
     public Call(int line, int col, String id) {
         super(line, col);
@@ -16,12 +18,16 @@ public class Call extends Cmd{
         return id;
     }
 
-    public Expr[] getArgs() {
-        return args;
+    public  ArrayList<Expr> getArgs() {
+        return exprs;
     }
 
-    public Lvalue[] getIdRet() {
-        return idRet;
+    public  ArrayList<Lvalue> getRets() {
+        return rets;
+    }
+
+    public void addExpr(Expr exp) {
+        this.exprs.add(exp);
     }
 
     @Override

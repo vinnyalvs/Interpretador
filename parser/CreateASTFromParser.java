@@ -15,11 +15,11 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
         SuperNode result = this.defaultResult();
         int n = ctx.data().size();
-//        for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
-//            ParseTree c = ctx.data(i);
-//            SuperNode childResult = c.accept(this);
-//            program_node.addData((Data) this.aggregateResult(result, childResult));
-//        }
+        for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
+            ParseTree c = ctx.data(i);
+            SuperNode childResult = c.accept(this);
+            program_node.addData((Data) this.aggregateResult(result, childResult));
+        }
 
         result = this.defaultResult();
         n = ctx.func().size();
@@ -31,27 +31,32 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
         return program_node;
     }
 
-//    @Override
-////    public SuperNode aggregateResult(SuperNode aggregate, SuperNode nextResult) {
-//////        if (aggregate == null) {
-//////            return nextResult;
-//////        }
-////
-////        if (nextResult == null) {
-////            return aggregate;
-////        }
-////
-////        return new Node(nextResult.getLine(), nextResult.getCol());
-////    }
-
     @Override
     public SuperNode visitData(LangParser.DataContext ctx) {
-        return super.visitData(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        Data node_data = new Data(line, column, ctx.ID().getText());
+
+        SuperNode result = this.defaultResult();
+        int n = ctx.decl().size();
+        for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
+            ParseTree c = ctx.decl(i);
+            SuperNode childResult = c.accept(this);
+            node_data.addDecl((Decl) this.aggregateResult(result, childResult));
+        }
+
+        return node_data;
     }
 
     @Override
     public SuperNode visitDecl(LangParser.DeclContext ctx) {
-        return super.visitDecl(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        Type t = (Type) ctx.type().accept(this);
+
+        Decl node_decl = new Decl(line, column, ctx.ID().getText(), t);
+
+        return node_decl;
     }
 
     @Override
@@ -86,21 +91,21 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitParams(LangParser.ParamsContext ctx) {
-//        int line = ctx.getStart().getLine();
-//        int column = ctx.getStart().getCharPositionInLine();
-//        ParamList paramsNode = new ParamList(line, column);
-//
-//        SuperNode result = this.defaultResult();
-//        ctx.
-//        int n = ctx.param().size();
-//        for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
-//            ParseTree c = ctx.param(i);
-//            SuperNode childResult = c.accept(this);
-//            paramsNode.appendParam((Param) this.aggregateResult(result, childResult));
-//        }
-//
-//        //return super.visitParams(ctx);
-//        return paramsNode;
+       int line = ctx.getStart().getLine();
+       int column = ctx.getStart().getCharPositionInLine();
+       ParamList paramsNode = new ParamList(line, column);
+       SuperNode result = this.defaultResult();
+
+        for(int i = 0; i < ctx.type().size() && this.shouldVisitNextChild(ctx, result); ++i) {
+            ParseTree c = ctx.type(i);
+            SuperNode childResult = c.accept(this);
+            Type t = (Type) ctx.type();
+            String type_id = ctx.type(i).getText();
+
+            ParamList.addParam(line,column,t,type_id);
+
+
+        }
         return null;
     }
 
@@ -168,7 +173,19 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitCmdlist(LangParser.CmdlistContext ctx) {
-        return super.visitCmdlist(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        CmdList cmd_node = new CmdList(line, column);
+
+        SuperNode result = this.defaultResult();
+        int n = ctx.cmd().size();
+        for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
+            ParseTree c = ctx.cmd(i);
+            SuperNode childResult = c.accept(this);
+            cmd_node.add((Cmd) this.aggregateResult(result, childResult));
+        }
+
+        return cmd_node;
     }
 
     @Override
@@ -227,7 +244,20 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitReturn(LangParser.ReturnContext ctx) {
-        return super.visitReturn(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Return node_return = new Return(line,column);
+
+        SuperNode result = this.defaultResult();
+        int n = ctx.exp().size();
+        for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
+            ParseTree c = ctx.exp(i);
+            SuperNode childResult = c.accept(this);
+            node_return.add((Expr) this.aggregateResult(result, childResult));
+        }
+
+        return node_return;
     }
 
     @Override
@@ -244,7 +274,17 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitCall(LangParser.CallContext ctx) {
-        return super.visitCall(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        Call node_call = new Call(line, column, ctx.ID().getText());
+
+        Expr expr = (Expr) ctx.exps().accept(this);
+        node_call.addExpr(expr);
+
+
+        return node_call;
+
+
     }
 
     @Override
@@ -479,7 +519,14 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitLvalue_dot(LangParser.Lvalue_dotContext ctx) {
-        return super.visitLvalue_dot(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Lvalue lv = (Lvalue) ctx.lvalue().accept(this);
+
+        Lvalue_dot node = new Lvalue_dot(line, column, lv, ctx.ID().getText());
+
+        return node;
     }
 
     @Override
@@ -493,12 +540,31 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitLvalue_array(LangParser.Lvalue_arrayContext ctx) {
-        return super.visitLvalue_array(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        Lvalue l = (Lvalue) ctx.lvalue().accept(this);
+        Expr e = (Expr) ctx.exp().accept(this);
+
+  //      Lvalue_array node = new Lvalue_array(line, column, l,);
+
+        return l;
     }
 
     @Override
     public SuperNode visitExp_list(LangParser.Exp_listContext ctx) {
-        return super.visitExp_list(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        ExprList node_expr_list = new ExprList(line,column);
+
+        SuperNode result = this.defaultResult();
+        int n = ctx.exp().size();
+        for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
+            ParseTree c = ctx.exp(i);
+            SuperNode childResult = c.accept(this);
+            node_expr_list.add((Expr) this.aggregateResult(result, childResult));
+        }
+        return node_expr_list;
+
     }
 
 }

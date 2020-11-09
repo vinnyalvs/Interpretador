@@ -3,8 +3,11 @@ package ast;
 import visitors.Visitor;
 
 public class Lvalue_dot extends Lvalue{
-    public Lvalue_dot(int line, int col, String id) {
+    Lvalue lv;
+    public Lvalue_dot(int line, int col, Lvalue lv, String id) {
         super(line, col, id);
+        this.lv = lv;
+
     }
 
     @Override

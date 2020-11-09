@@ -4,7 +4,7 @@ import visitors.Visitor;
 
 import java.util.ArrayList;
 
-public class CmdList extends Node{
+public class CmdList extends Cmd{
     private ArrayList<Cmd> cmdList;
 
     public CmdList(int line, int col) {

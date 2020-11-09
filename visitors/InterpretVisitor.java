@@ -12,6 +12,7 @@ public class InterpretVisitor extends Visitor{
     private HashMap <String, Func> funcs;
     private HashMap <String, Data> datas;
     private Stack <Object> operands;
+    private boolean retMode;
 
     public InterpretVisitor(){
         env = new Stack <HashMap <String, Object> >();
@@ -19,6 +20,7 @@ public class InterpretVisitor extends Visitor{
         funcs = new HashMap<String, Func>();
         datas = new HashMap<String, Data>();
         operands = new Stack<Object>();
+        retMode = false;
     }
 
     @Override
@@ -210,13 +212,19 @@ public class InterpretVisitor extends Visitor{
     @Override
     public void visit(Func f) {
         HashMap<String,Object> localEnv = new HashMap<String,Object>();
+
+        ParamList params= f.getParamList();
         for(int  i = f.getParamList().getSize()-1; i >= 0; i--){
-//            localEnv.put(f.getParamList()[i].getId(),operands.pop());
+           localEnv.put(params.getId(i),operands.pop());
         }
         env.push(localEnv);
-        f.getBody().accept(this);
+        CmdList cmds = f.getBody();
+        for(Cmd cmd : cmds.getCmdList() ){
+            cmd.accept(this);
+        }
 
         env.pop();
+        retMode = false;
     }
 
     @Override
@@ -247,10 +255,12 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(Iterate e) {
+
         try{
             e.getTest().accept(this);
-            while( (Boolean)operands.peek()){
+            while( (Boolean)operands.pop()){
                 e.getBody().accept(this);
+                e.getTest().accept(this);
             }
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
@@ -434,6 +444,7 @@ public class InterpretVisitor extends Visitor{
     @Override
     public void visit(ParamList e) {
 
+
     }
 
     @Override
@@ -466,6 +477,10 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(Return e) {
+        for(Expr ex : e.getArgs()){
+            ex.accept(this);
+        }
+        retMode = true;
 
     }
 
@@ -501,6 +516,11 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(TyData e) {
+
+    }
+
+    @Override
+    public void visit(ExprList exprList) {
 
     }
 }

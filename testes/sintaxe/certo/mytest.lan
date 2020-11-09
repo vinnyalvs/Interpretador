@@ -1,4 +1,7 @@
 main(){
-  iterate(true)
-    print 10;
+  x = 3;
+  iterate(x < 10) {
+    print x;
+    x = x + 1;
+   }
 }

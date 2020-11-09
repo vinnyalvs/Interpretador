@@ -49,4 +49,6 @@ public abstract class Visitor {
     public abstract void visit(TyFloat e);
     public abstract void visit(TyInt e);
     public abstract void visit(TyData e);
+
+    public abstract void visit(ExprList exprList);
 }
