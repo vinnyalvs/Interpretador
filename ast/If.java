@@ -4,17 +4,21 @@ import visitors.Visitor;
 
 public class If extends Cmd{
     Expr test;
-    Node then;
+    Cmd then;
 
-    public If(int line, int col) {
+    public If(int line, int col, Expr test, Cmd then) {
+
         super(line, col);
+        this.test = test;
+        this.then = then;
+
     }
 
     public Expr getTest() {
         return test;
     }
 
-    public Node getThen() {
+    public Cmd getThen() {
         return then;
     }
 

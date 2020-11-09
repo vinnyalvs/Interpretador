@@ -1,4 +1,6 @@
 main(){
-  x = null ;
-  print x;
+  x = 4;
+  if(x < 10)
+     print 'A';
+   print 'B';
 }

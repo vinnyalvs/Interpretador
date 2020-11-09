@@ -173,12 +173,27 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitIf(LangParser.IfContext ctx) {
-        return super.visitIf(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        Expr e = (Expr)ctx.exp().accept(this);
+        Cmd c = (Cmd)ctx.cmd().accept(this);
+
+        If node_if = new If(line,column,e,c);
+
+        return node_if;
     }
 
     @Override
     public SuperNode visitIf_else(LangParser.If_elseContext ctx) {
-        return super.visitIf_else(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        Expr e = (Expr)ctx.exp().accept(this);
+        Cmd then = (Cmd)ctx.cmd().get(0).accept(this);
+        Cmd els = (Cmd)ctx.cmd().get(1).accept(this);
+
+        If_else node_if_else = new If_else(line,column,e,then,els);
+
+        return node_if_else;
     }
 
     @Override
@@ -188,7 +203,11 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitRead(LangParser.ReadContext ctx) {
-        return super.visitRead(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+        Lvalue lv = (Lvalue)ctx.lvalue().accept(this);
+        Read node = new Read(line, column, lv);
+        return node;
     }
 
     @Override
@@ -196,9 +215,8 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
         int line = ctx.getStart().getLine();
         int column = ctx.getStart().getCharPositionInLine();
         Expr e = (Expr)ctx.exp().accept(this);
-
-        Print cmdPrint = new Print(line, column, e);
-        return cmdPrint;
+        Print node = new Print(line, column, e);
+        return node;
     }
 
     @Override

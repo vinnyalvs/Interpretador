@@ -452,7 +452,6 @@ public class InterpretVisitor extends Visitor{
         try{
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
             String read_info = reader.readLine();
            // e.setLv((Lvalue) read_info);
         }catch(Exception x){
