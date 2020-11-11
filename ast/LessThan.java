@@ -2,7 +2,7 @@ package ast;
 
 import visitors.Visitor;
 
-//Less Than
+//aexp RELACIONAL aexp #less_than
 public class LessThan extends BinOP{
 
     public LessThan(int line, int col, Expr l, Expr r) {

@@ -3,7 +3,7 @@ package ast;
 import visitors.Visitor;
 
 import java.util.ArrayList;
-
+//ID OP_PARENTHESIS (exps)? CL_PARENTHESIS ( RELACIONAL lvalue ( COMMA lvalue )* GREATER_THAN )? SEMI #call
 public class Call extends Cmd{
     private String id;
     ArrayList<Expr> exprs;

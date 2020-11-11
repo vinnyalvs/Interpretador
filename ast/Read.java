@@ -1,6 +1,7 @@
 package ast;
 
 import visitors.Visitor;
+//|	READ lvalue SEMI #read
 
 public class Read extends Cmd{
 

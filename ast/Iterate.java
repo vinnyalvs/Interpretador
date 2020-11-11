@@ -2,6 +2,8 @@ package ast;
 
 import visitors.Visitor;
 
+//	ITERATE OP_PARENTHESIS exp CL_PARENTHESIS cmd #iterate
+
 public class Iterate extends Cmd{
     Expr test;
     Cmd body;

@@ -2,6 +2,8 @@ package ast;
 
 import visitors.Visitor;
 
+
+//aexp MINUS mexp #diff
 public class Diff extends BinOP{
 
     public Diff(int line, int col, Expr l, Expr r) {

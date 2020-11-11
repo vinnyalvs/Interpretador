@@ -2,6 +2,7 @@ package ast;
 
 import visitors.Visitor;
 
+//NEW  type (OP_SQBRACKET exp CL_SQBRACKET)? #new
 public class New extends Expr{
 
     Type t;

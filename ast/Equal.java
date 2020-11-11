@@ -2,6 +2,7 @@ package ast;
 
 import visitors.Visitor;
 
+//rexp EQEQ aexp #eqeq
 public class Equal extends BinOP{
 
     public Equal(int line, int col, Expr l, Expr r) {

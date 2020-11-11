@@ -2,6 +2,7 @@ package ast;
 
 import visitors.Visitor;
 
+//decl:	ID DOUBLECOLON type SEMI ;
 public class Decl extends Node{
     String id;
     Type type;

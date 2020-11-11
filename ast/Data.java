@@ -4,6 +4,8 @@ import visitors.Visitor;
 
 import java.util.ArrayList;
 
+//data :	DATA ID OP_BRACKET (decl)* CL_BRACKET ;
+
 public class Data extends Node{
     String id;
     private ArrayList<Decl> decls;

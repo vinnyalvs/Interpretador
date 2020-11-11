@@ -2,6 +2,8 @@ package ast;
 
 import visitors.Visitor;
 
+//lvalue DOT ID #lvalue_dot
+
 public class Lvalue_dot extends Lvalue{
     Lvalue lv;
     String id;

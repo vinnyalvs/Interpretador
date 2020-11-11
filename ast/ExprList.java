@@ -4,6 +4,8 @@ import visitors.Visitor;
 
 import java.util.ArrayList;
 
+//exps:	exp  (COMMA exp)* #exp_list  ;
+
 public class ExprList extends Node {
 
     private ArrayList<Expr> exprList;

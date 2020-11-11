@@ -2,6 +2,8 @@ package ast;
 
 import visitors.Visitor;
 
+//lvalue OP_SQBRACKET exp CL_SQBRACKET #lvalue_array
+
 public class Lvalue_array extends Lvalue{
 
     Lvalue lv;

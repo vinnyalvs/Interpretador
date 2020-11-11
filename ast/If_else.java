@@ -2,6 +2,7 @@ package ast;
 
 import visitors.Visitor;
 
+//IF OP_PARENTHESIS exp CL_PARENTHESIS cmd ELSE cmd #if_else
 public class If_else extends If {
 
     Cmd els;

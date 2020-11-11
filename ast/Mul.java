@@ -2,6 +2,7 @@ package ast;
 
 import visitors.Visitor;
 
+//mexp TIMES sexp #mul
 public class Mul extends BinOP{
 
     public Mul(int line, int col, Expr l, Expr r) {

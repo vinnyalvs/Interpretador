@@ -40,9 +40,7 @@ public abstract class Visitor {
     public abstract void visit(Print e);
     public abstract void visit(Program e);
     public abstract void visit(Read e);
-    public abstract void visit(Rel e);
     public abstract void visit(Return e);
-    public abstract void visit(Sub e);
     public abstract void visit(TyArray e);
     public abstract void visit(TyBool e);
     public abstract void visit(TyChar e);

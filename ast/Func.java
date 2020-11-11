@@ -4,6 +4,8 @@ import visitors.Visitor;
 
 import java.util.ArrayList;
 
+//func:	ID OP_PARENTHESIS (params)? CL_PARENTHESIS (COLON type (COMMA type)* )? OP_BRACKET (cmd)* CL_BRACKET ;
+
 public class Func extends Node{
     ParamList paramList;
     ArrayList<Type> ret;

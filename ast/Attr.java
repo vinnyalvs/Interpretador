@@ -1,7 +1,7 @@
 package ast;
 
 import visitors.Visitor;
-
+//lvalue EQ exp SEMI #attr
 public class Attr extends Cmd{
     Lvalue lv;
     Expr e;

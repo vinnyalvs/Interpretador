@@ -2,6 +2,7 @@ package ast;
 
 import visitors.Visitor;
 
+//DENY sexp #deny
 public class Deny extends Expr{
     Expr expr;
 

@@ -62,7 +62,7 @@ public class TestParser {
 
    public void teste(){
        try {
-           adp.parseFile("/home/edson/IdeaProjects/Interpretador/testes/sintaxe/certo/mytest.lan");
+           adp.parseFile("/home/vinicius/Compiladores/TesteInterpretador/src/testes/sintaxe/certo/mytest.lan");
        }
        catch(Exception e){
            e.printStackTrace();

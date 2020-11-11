@@ -2,6 +2,7 @@ package ast;
 
 import visitors.Visitor;
 
+//rexp DIFF aexp #noeq
 public class Noeq extends BinOP{
 
     public Noeq(int line, int col, Expr l, Expr r) {

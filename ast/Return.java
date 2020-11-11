@@ -4,6 +4,7 @@ import visitors.Visitor;
 
 import java.util.ArrayList;
 
+//RETURN exp (COMMA exp)* SEMI #return
 public class Return extends Cmd{
     private ArrayList<Expr> args;
 

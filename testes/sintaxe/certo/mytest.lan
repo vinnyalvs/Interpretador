@@ -1,9 +1,3 @@
 main(){
-    x = new Int[10];
-    x[1] = 144;
-    print x[1];
-    print y[11];
-    x[][];
-
-    Ponto x[] = new Ponto[][10];
+ x = '\t';
 }

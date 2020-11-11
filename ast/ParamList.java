@@ -6,6 +6,8 @@ import visitors.Visitor;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+//params:	ID DOUBLECOLON type ( COMMA  ID DOUBLECOLON type )* ;
+
 public class ParamList extends Node{
 
     ArrayList<Type> types;

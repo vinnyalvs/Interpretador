@@ -278,7 +278,17 @@ public class InterpretVisitor extends Visitor{
 
         try{
             e.getTest().accept(this);
-            while( (Boolean)operands.pop()){
+            Integer max_iterations = (Integer) operands.pop();
+            /*Object o = operands.pop();
+            Boolean check;
+            if(o instanceof Boolean)
+                check = (Boolean)o;
+            else if(o instanceof Integer )
+                max_iterations = (Integer)o;*/
+            int i=0;
+            //Se for Boolean, pegar a varíável e fazer o cálculo de quantas iterações devem ser feitas
+            while(i < max_iterations){
+                i++;
                 e.getBody().accept(this);
                 e.getTest().accept(this);
             }
@@ -553,21 +563,11 @@ public class InterpretVisitor extends Visitor{
     }
 
     @Override
-    public void visit(Rel e) {
-
-    }
-
-    @Override
     public void visit(Return e) {
         for(Expr ex : e.getArgs()){
             ex.accept(this);
         }
         retMode = true;
-
-    }
-
-    @Override
-    public void visit(Sub e) {
 
     }
 

@@ -4,6 +4,7 @@ import visitors.Visitor;
 
 import java.util.ArrayList;
 
+//prog :	data* func* ;
 public class Program extends Node{
     ArrayList<Func> funcs;
     ArrayList<Data> datas;

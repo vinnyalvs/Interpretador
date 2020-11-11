@@ -3,7 +3,7 @@ package ast;
 import visitors.Visitor;
 
 import java.util.ArrayList;
-
+//OP_BRACKET (cmd)* CL_BRACKET #cmdlist
 public class CmdList extends Cmd{
     private ArrayList<Cmd> cmdList;
 

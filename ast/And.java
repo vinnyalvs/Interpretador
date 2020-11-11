@@ -2,6 +2,7 @@ package ast;
 
 import visitors.Visitor;
 
+// exp AND exp #and
 public class And extends BinOP{
 
     public And(int line, int col, Expr l, Expr r) {

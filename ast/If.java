@@ -2,6 +2,7 @@ package ast;
 
 import visitors.Visitor;
 
+//IF OP_PARENTHESIS exp CL_PARENTHESIS cmd #if
 public class If extends Cmd{
     Expr test;
     Cmd then;

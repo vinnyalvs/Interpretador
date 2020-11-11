@@ -2,6 +2,7 @@ package ast;
 
 import visitors.Visitor;
 
+//	|	PRINT exp SEMI  #print
 public class Print extends Cmd{
     Expr expr;
 
