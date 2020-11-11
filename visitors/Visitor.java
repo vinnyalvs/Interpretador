@@ -16,7 +16,6 @@ public abstract class Visitor {
     public abstract void visit(Diff e);
     public abstract void visit(Div e);
     public abstract void visit(Equal e);
-//    public abstract void visit(Expr e);
     public abstract void visit(Func e);
     public abstract void visit(If e);
     public abstract void visit(If_else e);
@@ -35,6 +34,7 @@ public abstract class Visitor {
     public abstract void visit(Minus e);
     public abstract void visit(Mod e);
     public abstract void visit(Mul e);
+    public abstract void visit(New e);
     public abstract void visit(Noeq e);
     public abstract void visit(ParamList e);
     public abstract void visit(Print e);

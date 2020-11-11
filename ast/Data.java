@@ -11,6 +11,7 @@ public class Data extends Node{
     public Data(int line, int col, String id) {
         super(line, col);
         this.id = id;
+        decls = new ArrayList<Decl>();
     }
 
     public String getId() {

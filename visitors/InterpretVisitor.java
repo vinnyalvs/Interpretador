@@ -4,6 +4,7 @@ import ast.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
@@ -81,7 +82,27 @@ public class InterpretVisitor extends Visitor{
     public void visit(Attr e) {
         try{
             e.getE().accept(this);
-            env.peek().put(e.getLv().getId(), operands.pop());
+
+            Lvalue lv = e.getLv();
+
+            if (lv instanceof Lvalue_dot)
+            {
+                Object o = env.peek().get( ( (Lvalue_id) ( (Lvalue_dot) lv).getLv() ).getId() );
+                ((HashMap<String,Object>)o).put(((Lvalue_dot)lv).getId(), operands.pop());
+            }
+            else if (lv instanceof Lvalue_id)
+                env.peek().put( ((Lvalue_id)lv).getId(), operands.pop());
+
+            else if (lv instanceof Lvalue_array)
+            {
+                Object o = env.peek().get( ( (Lvalue_id) ( (Lvalue_array) lv).getLv() ).getId() );
+
+                ((Lvalue_array) lv).getExp().accept(this);
+                Integer index = (Integer)operands.pop();
+
+                ((ArrayList<Object>)o).set( index , operands.pop());
+            }
+
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
@@ -345,12 +366,40 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(Lvalue_array e) {
+        try{
+            e.getExp().accept(this);
+            Integer index = (Integer)operands.pop();
 
+            Lvalue_id lv = (Lvalue_id) e.getLv();
+
+            Object r = env.peek().get(lv.getId());
+            if(r != null ){
+                if (((ArrayList<Object>)r).size() >= index)
+                    operands.push(((ArrayList<Object>)r).get(index));
+                else{throw new RuntimeException("Indice " + index + " fora dos limites da variavel " + lv.getId());}
+            }
+            else{throw new RuntimeException("variável " + lv.getId() + " não declarada");}
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override
     public void visit(Lvalue_dot e) {
+        try{
 
+            Lvalue_id lv = (Lvalue_id) e.getLv();
+
+            Object r = env.peek().get(lv.getId());
+            if(r != null ){
+                if (((HashMap<String, Object>)r).containsKey(e.getId()))
+                    operands.push(((HashMap<String, Object>)r).get(e.getId()));
+                else{throw new RuntimeException("variável" +lv.getId() + "." + e.getId() + " não declarada ");}
+            }
+            else{throw new RuntimeException("variável " + lv.getId() + " não declarada");}
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override
@@ -360,7 +409,7 @@ public class InterpretVisitor extends Visitor{
             if(r != null || (r == null && env.peek().containsKey(e.getId()))){
                 operands.push(r);
             }
-            else{throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") variável não declarada " +e.getId() );}
+            else{throw new RuntimeException("variável " + e.getId() + " não declarada");}
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
@@ -416,6 +465,40 @@ public class InterpretVisitor extends Visitor{
                 operands.push( new Float (esq.floatValue() * dir.floatValue()) );
             else
                 operands.push( new Integer (esq.intValue() * dir.intValue()) );
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
+    }
+
+    @Override
+    public void visit(New e) {
+        try{
+            e.getT().accept(this);
+
+            if (e.getE() != null)
+            {
+                e.getE().accept(this);
+                Integer size = (Integer) operands.pop();
+
+                Object o = operands.pop();
+                ArrayList  newArray = new ArrayList<Object>(size);
+                for (int i = 0; i < size; ++i)
+                    newArray.add(o);
+
+                operands.push(newArray);
+            }
+
+            if (e.getE() == null && e.getT() instanceof TyData)
+            {
+                String data_id = ((TyData) e.getT()).getId();
+                HashMap<String, Object> newVar = new HashMap<String, Object>();
+                for (Decl d : datas.get(data_id).getDeclList() )
+                {
+                    d.getType().accept(this);
+                    newVar.put (d.getId() , operands.pop() );
+                }
+                operands.push(newVar);
+            }
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }
@@ -490,32 +573,59 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(TyArray e) {
-
+        try{
+            e.getType().accept(this);
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override
     public void visit(TyBool e) {
-
+        try{
+            operands.push(new Boolean(false));
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override
     public void visit(TyChar e) {
-
+        try{
+            operands.push(new Character(' '));
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override
     public void visit(TyFloat e) {
-
+        try{
+            operands.push(new Float(0.0));
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override
     public void visit(TyInt e) {
-
+        try{
+            operands.push(new Integer(0));
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override
     public void visit(TyData e) {
-
+        try{
+            if(!datas.containsKey(e.getId()))
+            {
+                throw new RuntimeException( "Data" + e.getId() + " não existe!");
+            }
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override

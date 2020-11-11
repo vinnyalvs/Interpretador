@@ -509,7 +509,17 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitNew(LangParser.NewContext ctx) {
-        return super.visitNew(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        Type t = (Type) ctx.type().accept(this);
+        Expr e = null;
+        if (ctx.exp() != null)
+           e = (Expr) ctx.exp().accept(this);
+
+        New node = new New(line, column, t, e);
+
+        return node;
     }
 
     @Override
@@ -545,9 +555,9 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
         Lvalue l = (Lvalue) ctx.lvalue().accept(this);
         Expr e = (Expr) ctx.exp().accept(this);
 
-  //      Lvalue_array node = new Lvalue_array(line, column, l,);
+        Lvalue_array node = new Lvalue_array(line, column, l, e);
 
-        return l;
+        return node;
     }
 
     @Override
