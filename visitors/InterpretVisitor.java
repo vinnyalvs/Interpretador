@@ -121,6 +121,7 @@ public class InterpretVisitor extends Visitor{
                 }
                 f.accept(this);
 
+
             }else{
                 throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") Função não definida " +  e.getId());
             }
@@ -278,19 +279,23 @@ public class InterpretVisitor extends Visitor{
 
         try{
             e.getTest().accept(this);
-            Integer max_iterations = (Integer) operands.pop();
-            /*Object o = operands.pop();
-            Boolean check;
+
+            Object o = operands.pop();
+
             if(o instanceof Boolean)
-                check = (Boolean)o;
-            else if(o instanceof Integer )
-                max_iterations = (Integer)o;*/
-            int i=0;
-            //Se for Boolean, pegar a varíável e fazer o cálculo de quantas iterações devem ser feitas
-            while(i < max_iterations){
-                i++;
-                e.getBody().accept(this);
-                e.getTest().accept(this);
+                while((Boolean) o){
+                    e.getBody().accept(this);
+                    e.getTest().accept(this);
+                    o = operands.pop();
+                }
+            else if(o instanceof Integer ) {
+                Integer max_iterations = (Integer) o;
+                int i=0;
+                while(i<max_iterations){
+                    i++;
+                    e.getBody().accept(this);
+                    //e.getTest().accept(this);
+                }
             }
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
@@ -555,7 +560,10 @@ public class InterpretVisitor extends Visitor{
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             String read_info = reader.readLine();
-           // e.setLv((Lvalue) read_info);
+
+            Lvalue_id lvalue = (Lvalue_id) e.getLv();
+            env.peek().put(lvalue.getId(), read_info);
+
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
         }

@@ -1,3 +1,5 @@
 main(){
- x = '\t';
+  x = 0;
+  read x;
+  print x;
 }

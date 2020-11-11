@@ -99,7 +99,7 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
         for(int i = 0; i < ctx.type().size() && this.shouldVisitNextChild(ctx, result); ++i) {
             ParseTree c = ctx.type(i);
             SuperNode childResult = c.accept(this);
-            Type t = (Type) ctx.type();
+            Type t = (Type) ctx.type(i).accept(this);
             String type_id = ctx.type(i).getText();
 
             ParamList.addParam(line,column,t,type_id);
@@ -486,9 +486,24 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
         int line = ctx.getStart().getLine();
         int column = ctx.getStart().getCharPositionInLine();
+        String original_text = ctx.LITERAL_CHAR().getText();
+        String escaped_text =  original_text.replace("'\\\\'", "'\\'");
+        //Criar HashMap como um dicionário mapeando os caracteres.
+        escaped_text = escaped_text.replace("'\\n'", "'\n'");
+        escaped_text = escaped_text.replace("'\\r'", "'\r'");
+        escaped_text = escaped_text.replace("'\\t'", "'\t'");
+        escaped_text = escaped_text.replace("'\\b'", "'\b'");
 
-        LiteralChar litNode = new LiteralChar(line, column, ctx.LITERAL_CHAR().getText().charAt(1));
+        escaped_text = escaped_text.replace("'\\''", "'''");
+        escaped_text = escaped_text.replace("'\\\"'", "'\"'");
+        Character c = escaped_text.charAt(1);
+
+
+        LiteralChar litNode = new LiteralChar(line, column, c);
         return litNode;
+
+     //   LiteralChar litNode = new LiteralChar(line, column, ctx.LITERAL_CHAR().getText().charAt(1));
+   //     return litNode;
     }
 
     @Override
