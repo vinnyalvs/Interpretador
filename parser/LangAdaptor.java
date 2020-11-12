@@ -44,10 +44,6 @@ public class LangAdaptor implements ParseAdaptor {
 
             ((Node)s).accept(iv);
 
-            System.out.println("Resultado");
-
-            System.out.println(s.toString());
-
             SuperNode node = new Node();
 
             return node;

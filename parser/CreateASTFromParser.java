@@ -3,7 +3,9 @@ package parser;
 import ast.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
@@ -497,23 +499,31 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
         int line = ctx.getStart().getLine();
         int column = ctx.getStart().getCharPositionInLine();
         String original_text = ctx.LITERAL_CHAR().getText();
-        String escaped_text =  original_text.replace("'\\\\'", "'\\'");
         //Criar HashMap como um dicionário mapeando os caracteres.
-        escaped_text = escaped_text.replace("'\\n'", "'\n'");
-        escaped_text = escaped_text.replace("'\\r'", "'\r'");
-        escaped_text = escaped_text.replace("'\\t'", "'\t'");
-        escaped_text = escaped_text.replace("'\\b'", "'\b'");
+        HashMap<String,String> dict = new HashMap<String,String>();
+        dict.put("'\\\\'", "'\\'");
+        dict.put("'\\n'", "'\n'");
+        dict.put("'\\r'", "'\r'");
+        dict.put("'\\t'", "'\t'");
+        dict.put("'\\b'", "'\b'");
+        dict.put("'\\''", "'''");
+        dict.put("'\\\"'", "'\"'");
 
-        escaped_text = escaped_text.replace("'\\''", "'''");
-        escaped_text = escaped_text.replace("'\\\"'", "'\"'");
-        Character c = escaped_text.charAt(1);
+        String new_string = original_text;
+
+        Iterator it = dict.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            new_string = new_string.replace((String) pair.getKey(), (String)pair.getValue());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+
+        Character c = new_string.charAt(1);
 
 
         LiteralChar litNode = new LiteralChar(line, column, c);
         return litNode;
 
-     //   LiteralChar litNode = new LiteralChar(line, column, ctx.LITERAL_CHAR().getText().charAt(1));
-   //     return litNode;
     }
 
     @Override

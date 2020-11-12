@@ -33,7 +33,8 @@ public class LangCompiler{
 	   ParseAdaptor langParser = new LangAdaptor();
           
           if(args[0].equals("-bs") ){
-              System.out.println("Executando bateria de testes sintáticos:");
+              //System.out.println("Executando bateria de testes sintáticos:");
+              System.out.println("Executando teste com arquivo mytest.lan");
               TestParser tp = new TestParser(langParser);
               return;
           }if(args[0].equals("-byt") ){
