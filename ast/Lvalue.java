@@ -8,6 +8,8 @@ public abstract class Lvalue extends Expr{
         super(line, col);
     }
 
+    public abstract String getId();
+
     @Override
     public void accept(Visitor v) {v.visit(this);}
 }

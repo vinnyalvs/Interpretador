@@ -19,8 +19,8 @@ public class TestParser {
    public TestParser(ParseAdaptor adp){
         this.adp = adp;
         f = new File(okSrcs);
-//        runOkTests();
-        teste();
+    //     runOkTests();
+       teste();
    }
    
    private String filler(int n){
@@ -62,7 +62,7 @@ public class TestParser {
 
    public void teste(){
        try {
-           adp.parseFile("/home/vinicius/Compiladores/TesteInterpretador/src/testes/sintaxe/certo/mytest.lan");
+           adp.parseFile("testes/sintaxe/certo/mytest.lan");
        }
        catch(Exception e){
            e.printStackTrace();

@@ -17,6 +17,7 @@ public class Func extends Node{
         this.id = id;
         body = new CmdList(line, col);
         paramList = new ParamList(line, col);
+        ret = new ArrayList<Type>();
     }
 
     public ParamList getParamList() {

@@ -19,9 +19,6 @@ public class ParamList extends Node{
         ids = new ArrayList<>();
     }
 
-    public static void addParam(int line, int column, Type t, String type_id) {
-    }
-
     public Type getType(int index) {
         return types.get(index);
     }
@@ -37,6 +34,22 @@ public class ParamList extends Node{
 
     public int getSize (){
         return types.size();
+    }
+
+    public ArrayList<Type> getTypes() {
+        return types;
+    }
+
+    public void setTypes(ArrayList<Type> types) {
+        this.types = types;
+    }
+
+    public ArrayList<String> getIds() {
+        return ids;
+    }
+
+    public void setIds(ArrayList<String> ids) {
+        this.ids = ids;
     }
 
     @Override

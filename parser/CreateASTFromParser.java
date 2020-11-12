@@ -97,16 +97,15 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
        SuperNode result = this.defaultResult();
 
         for(int i = 0; i < ctx.type().size() && this.shouldVisitNextChild(ctx, result); ++i) {
-            ParseTree c = ctx.type(i);
-            SuperNode childResult = c.accept(this);
+           // ParseTree c = ctx.type(i);
+            //SuperNode childResult = c.accept(this);
             Type t = (Type) ctx.type(i).accept(this);
-            String type_id = ctx.type(i).getText();
-
-            ParamList.addParam(line,column,t,type_id);
+            String type_id = ctx.ID(i).getText();
+            paramsNode.addParam(type_id,t);
 
 
         }
-        return null;
+        return paramsNode;
     }
 
 
@@ -278,8 +277,19 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
         int column = ctx.getStart().getCharPositionInLine();
         Call node_call = new Call(line, column, ctx.ID().getText());
 
-        Expr expr = (Expr) ctx.exps().accept(this);
-        node_call.addExpr(expr);
+        if(ctx.exps() != null){
+            ExprList exprlist = (ExprList) ctx.exps().accept(this);
+            node_call.setExprs(exprlist);
+        }
+
+        SuperNode result = this.defaultResult();
+        int n = ctx.lvalue().size();
+
+        for(int i = 0; i < n && this.shouldVisitNextChild(ctx, result); ++i) {
+            ParseTree c = ctx.lvalue(i);
+            SuperNode childResult = c.accept(this);
+            node_call.addReturn((Lvalue) this.aggregateResult(result, childResult));
+        }
 
 
         return node_call;

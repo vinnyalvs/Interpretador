@@ -116,12 +116,16 @@ public class InterpretVisitor extends Visitor{
         try{
             Func f = funcs.get(e.getId());
             if(f != null){
-                for(Expr exp : e.getArgs()){
+                /*for(Expr exp : e.getArgs().getExprList()){
                     exp.accept(this);
-                }
+                }*/
+                e.getArgs().accept(this);
                 f.accept(this);
+                ArrayList <Lvalue> returns = e.getRets();
 
-
+                for(int i = returns.size()-1; i >= 0 ; i--){
+                    env.peek().put(returns.get(i).getId(),operands.pop());
+                }
             }else{
                 throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") Função não definida " +  e.getId());
             }
@@ -143,9 +147,12 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(CmdList e) {
+        if(retMode){ return;}
         try {
-            for (Cmd cmd : e.getCmdList())
+            for (Cmd cmd : e.getCmdList()) {
                 cmd.accept(this);
+                if(retMode){ return;}
+            }
         }
         catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
@@ -235,14 +242,21 @@ public class InterpretVisitor extends Visitor{
         HashMap<String,Object> localEnv = new HashMap<String,Object>();
 
         ParamList params= f.getParamList();
+        params.accept(this);
+
+        for(int  i = f.getParamList().getSize()-1; i >= 0; i--){
+            localEnv.put(params.getId(i),operands.pop());
+        }
+
         for(int  i = f.getParamList().getSize()-1; i >= 0; i--){
            localEnv.put(params.getId(i),operands.pop());
         }
         env.push(localEnv);
         CmdList cmds = f.getBody();
-        for(Cmd cmd : cmds.getCmdList() ){
+        cmds.accept(this);
+       /* for(Cmd cmd : cmds.getCmdList() ){
             cmd.accept(this);
-        }
+        } */
 
         env.pop();
         retMode = false;
@@ -540,8 +554,21 @@ public class InterpretVisitor extends Visitor{
 
     @Override
     public void visit(ParamList e) {
+        try{
+            for(Type t : e.getTypes()){
+                t.accept(this);
+                if(t instanceof TyArray) {
 
+                    Object o = operands.pop(); //retirando elemento colocado no accept
+                    ArrayList  newArray = new ArrayList<Object>();
 
+                    operands.push(newArray);
+                }
+              // operands.pop();
+            }
+        }catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
     }
 
     @Override
@@ -561,8 +588,27 @@ public class InterpretVisitor extends Visitor{
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             String read_info = reader.readLine();
 
-            Lvalue_id lvalue = (Lvalue_id) e.getLv();
-            env.peek().put(lvalue.getId(), read_info);
+            Lvalue lv = e.getLv();
+
+            if (lv instanceof Lvalue_dot)
+            {
+                Object o = env.peek().get( ( (Lvalue_id) ( (Lvalue_dot) lv).getLv() ).getId() );
+                ((HashMap<String,Object>)o).put(((Lvalue_dot)lv).getId(), read_info);
+            }
+            else if (lv instanceof Lvalue_id)
+                env.peek().put(((Lvalue_id)lv).getId(), read_info);
+
+            else if (lv instanceof Lvalue_array)
+            {
+                Object o = env.peek().get( ( (Lvalue_id) ( (Lvalue_array) lv).getLv() ).getId() );
+
+                ((Lvalue_array) lv).getExp().accept(this);
+                Integer index = (Integer)operands.pop();
+
+                ((ArrayList<Object>)o).set( index , read_info);
+            }
+
+
 
         }catch(Exception x){
             throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
@@ -576,7 +622,6 @@ public class InterpretVisitor extends Visitor{
             ex.accept(this);
         }
         retMode = true;
-
     }
 
     @Override
@@ -637,7 +682,15 @@ public class InterpretVisitor extends Visitor{
     }
 
     @Override
-    public void visit(ExprList exprList) {
+    public void visit(ExprList e) {
+        try{
+             for(Expr exp : e.getExprList()){
+                 exp.accept(this);
+             }
+        }
+        catch(Exception x){
+            throw new RuntimeException( " (" + e.getLine() + ", " + e.getCol() + ") " + x.getMessage() );
+        }
+}
 
-    }
 }

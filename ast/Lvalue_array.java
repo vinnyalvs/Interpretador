@@ -9,10 +9,16 @@ public class Lvalue_array extends Lvalue{
     Lvalue lv;
     Expr exp;
 
+
     public Lvalue_array(int line, int col, Lvalue lv, Expr exp) {
         super(line, col);
         this.lv = lv;
         this.exp = exp;
+    }
+
+    @Override
+    public String getId() {
+        return lv.getId();
     }
 
     public Lvalue getLv() {
