@@ -10,6 +10,7 @@ public class TypeCheckVisitor extends Visitor {
     private STyFloat tyfloat =  STyFloat.newSTyFloat();
     private STyChar tychar =  STyChar.newSTyChar();
     private STyBool tybool =  STyBool.newSTyBool();
+    private STyNull tynull =  STyNull.newSTyNull();
     private STyErr tyerr =  STyErr.newSTyErr();
 
     private ArrayList<String> logError;
@@ -96,6 +97,13 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(Iterate e) {
+        e.getTest().accept(this);
+        SType o = stk.pop();
+        if(o.match(tybool) || o.match(tyint)){
+            e.getBody().accept(this);
+        }else{
+            logError.add( e.getLine() + ", " + e.getCol() + ": Expressão de teste do Iterate deve ter tipo Bool Ou Inteiro");
+        }
 
     }
 
@@ -106,27 +114,30 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(LiteralChar e) {
+        stk.push(tychar);
 
     }
 
     @Override
     public void visit(LiteralFalse e) {
-
+        stk.push(tybool);
     }
 
     @Override
     public void visit(LiteralFloat e) {
+        stk.push(tyfloat);
 
     }
 
     @Override
     public void visit(LiteralInt e) {
+        stk.push(tyint);
 
     }
 
     @Override
     public void visit(LiteralNull e) {
-
+        stk.push(tynull);
     }
 
     @Override
@@ -215,7 +226,18 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(Noeq e) {
-
+        e.getL().accept(this);
+        e.getR().accept(this);
+        SType tyr = stk.pop();
+        SType tyl = stk.pop();
+//        if( (tyr.match(tyint) || tyr.match(tyfloat) || tyr.match(tybool) ||  tyr.match(tynull)  ) && (tyl.match(tyint) || tyr.match(tyfloat))  || tyl.match(tybool) ||  tyl.match(tynull) ){
+        // TODO quando ouver tipo expressões, checar se dois lados são expr
+        if(tyl.match(tyr))
+            stk.push(tybool);
+        else{
+            logError.add( e.getLine() + ", " + e.getCol() + ": Operador = não se aplica aos tipos " + tyl.toString() + " e " + tyr.toString() );
+            stk.push(tyerr);
+        }
     }
 
     @Override
@@ -225,7 +247,8 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(Print e) {
-
+        e.getExpr().accept(this);
+        stk.pop();
     }
 
     public void visit(Div e){
@@ -236,15 +259,40 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(Equal e) {
-
+        e.getL().accept(this);
+        e.getR().accept(this);
+        SType tyr = stk.pop();
+        SType tyl = stk.pop();
+//        if( (tyr.match(tyint) || tyr.match(tyfloat) || tyr.match(tybool) ||  tyr.match(tynull)  ) && (tyl.match(tyint) || tyr.match(tyfloat))  || tyl.match(tybool) ||  tyl.match(tynull) ){
+        // TODO quando ouver tipo expressões, checar se dois lados são expr
+        if(tyl.match(tyr))
+            stk.push(tybool);
+        else{
+            logError.add( e.getLine() + ", " + e.getCol() + ": Operador = não se aplica aos tipos " + tyl.toString() + " e " + tyr.toString() );
+            stk.push(tyerr);
+        }
     }
 
-    public void visit(Diff e){}
+    public void visit(Diff e){
+        e.getL().accept(this);
+        e.getR().accept(this);
+        typeArithmeticBinOp(e,"-");
+
+
+    }
 
     public void visit(And e){
         e.getL().accept(this);
         e.getR().accept(this);
-        typeArithmeticBinOp(e,"-");
+        SType tyr = stk.pop();
+        SType tyl = stk.pop();
+        if( tyr.match(tybool) && tyl.match(tybool)  ){
+            stk.push(tybool);
+        }
+        else{
+            logError.add( e.getLine() + ", " + e.getCol() + ": Operador & não se aplica aos tipos " + tyl.toString() + " e " + tyr.toString() );
+            stk.push(tyerr);
+        }
 
     }
 
@@ -285,6 +333,14 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(Deny e) {
+        e.getExpr().accept(this);
+        SType tyr = stk.pop();
+        if(tyr.match(tybool) ){
+            stk.push(tybool);
+        }else{
+            logError.add( e.getLine() + ", " + e.getCol() + ": Operador ! não se aplica ao tipo " + tyr.toString() );
+            stk.push(tyerr);
+        }
 
     }
 
