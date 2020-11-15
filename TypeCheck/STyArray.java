@@ -6,7 +6,7 @@ public class STyArray extends SType {
 
     private SType a;
 
-    private STyArray(SType t){
+    public STyArray(SType t){
         a = t;
 
     }

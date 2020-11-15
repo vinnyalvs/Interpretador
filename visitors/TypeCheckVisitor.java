@@ -15,8 +15,8 @@ public class TypeCheckVisitor extends Visitor {
 
     private ArrayList<String> logError;
 
-    // private TyEnv<LocalEnv<SType>> env;
-    // private LocalEnv<SType> temp;
+     private TyEnv<LocalEnv<SType>> env;
+     private LocalEnv<SType> temp;
 
     private Stack<SType> stk;
     private  boolean retCheck;
@@ -45,32 +45,43 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(Return e) {
+        for(Expr expr : e.getArgs())
+             expr.accept(this);
+        if(temp.getFuncType() instanceof STyFunc){
+            SType[] t = ((STyFunc)temp.getFuncType()).getTypes();
+            t[t.length-1].match(stk.pop());
+        }
+        else{
+            stk.pop().match(temp.getFuncType());
+        }
+        retCheck = true;
 
     }
 
     @Override
     public void visit(TyArray e) {
-
+        e.getType().accept(this);
+        stk.push(new STyArray(stk.pop()) );
     }
 
     @Override
     public void visit(TyBool e) {
-
+        stk.push(tybool);
     }
 
     @Override
     public void visit(TyChar e) {
-
+        stk.push(tychar);
     }
 
     @Override
     public void visit(TyFloat e) {
-
+        stk.push(tyfloat);
     }
 
     @Override
     public void visit(TyInt e) {
-
+        stk.push(tyint);
     }
 
     @Override
@@ -109,6 +120,17 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(LessThan e) {
+        e.getL().accept(this);
+        e.getR().accept(this);
+        SType tyr = stk.pop();
+        SType tyl = stk.pop();
+        if( (tyr.match(tyint) || tyr.match(tyfloat) ) && (tyl.match(tyint) || tyr.match(tyfloat)) ){
+            stk.push(tybool);
+        }
+        else{
+            logError.add( e.getLine() + ", " + e.getCol() + ": Operador < não se aplica aos tipos " + tyl.toString() + " e " + tyr.toString() );
+            stk.push(tyerr);
+        }
 
     }
 
@@ -318,6 +340,9 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(CmdList e) {
+        for(Cmd cmd : e.getCmdList()){
+            cmd.accept(this);
+        }
 
     }
 
