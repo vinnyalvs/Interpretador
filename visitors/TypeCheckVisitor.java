@@ -3,6 +3,7 @@ import TypeCheck.*;
 import ast.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 
 public class TypeCheckVisitor extends Visitor {
@@ -15,15 +16,17 @@ public class TypeCheckVisitor extends Visitor {
 
     private ArrayList<String> logError;
 
-     private TyEnv<LocalEnv<SType>> env;
-     private LocalEnv<SType> temp;
+    private HashMap<String, SType> map_datas;
+    private TyEnv<LocalEnv<SType>> env;
+    private LocalEnv<SType> temp;
 
     private Stack<SType> stk;
     private  boolean retCheck;
 
     public TypeCheckVisitor() {
         stk = new Stack<SType>();
-        // env = new TyEnv<LocalEnv<SType>>();
+        env = new TyEnv<LocalEnv<SType>>();
+        map_datas = new HashMap<String, SType>();
         logError = new ArrayList<String>();
     }
 
@@ -40,6 +43,31 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(Read e) {
+        //Como comentado no Google Classroom, é possível limitar o Read.
+        // Desta Forma será escolhido o READ apenas para valores inteiros
+
+        Lvalue lv = e.getLv();
+
+        String id = "";
+
+        // È desse jeito pq o código é gambiarrado e o lvalue dot retorna o próprio id em getId()
+
+        if (lv instanceof Lvalue_dot)
+        {
+            id =  ((Lvalue_dot) lv).getLv().getId() ;
+            //((HashMap<String,Object>)o).put(((Lvalue_dot)lv).getId(), read_info);
+        } else {
+            id = (lv).getId();
+        }
+
+        if (temp.get(id) == null ) {
+            temp.set(id, tyint);
+        } else { // se já está declarada ou se é algum outro tipo
+            lv.accept(this); // tipo da variavel
+            if (!stk.pop().match(tyint)) {
+                logError.add(e.getLine() + ", " + e.getCol() + ": Comando READ só funciona para números inteiros " + id);
+            }
+        }
 
     }
 
