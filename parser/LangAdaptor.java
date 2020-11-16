@@ -40,9 +40,13 @@ public class LangAdaptor implements ParseAdaptor {
 
             SuperNode s = antlr_visitor.visit(parser.prog());
 
-            InterpretVisitor iv = new InterpretVisitor();
+            TypeCheckVisitor tc = new TypeCheckVisitor();
 
-            ((Node)s).accept(iv);
+            ((Node)s).accept(tc);
+
+//            InterpretVisitor iv = new InterpretVisitor();
+//
+//            ((Node)s).accept(iv);
 
             SuperNode node = new Node();
 

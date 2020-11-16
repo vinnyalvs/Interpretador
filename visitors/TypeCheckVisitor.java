@@ -16,7 +16,7 @@ public class TypeCheckVisitor extends Visitor {
 
     private ArrayList<String> logError;
 
-    private HashMap<String, SType> map_datas;
+    private HashMap<String, STyData> datas;
     private TyEnv<LocalEnv<SType>> env;
     private LocalEnv<SType> temp;
 
@@ -26,7 +26,7 @@ public class TypeCheckVisitor extends Visitor {
     public TypeCheckVisitor() {
         stk = new Stack<SType>();
         env = new TyEnv<LocalEnv<SType>>();
-        map_datas = new HashMap<String, SType>();
+        datas = new HashMap<>();
         logError = new ArrayList<String>();
     }
 
@@ -39,7 +39,46 @@ public class TypeCheckVisitor extends Visitor {
             System.out.println(s);
     }
 
-    public void visit(Program p){}
+    public void visit(Program p){
+        for(Data d : p.getDatas())
+        {
+            STyData data = new STyData(d.getId());
+            ArrayList<Decl> decList = d.getDeclList();
+            for (Decl de : decList) {
+                de.accept(this);
+                data.add(de.getId(), stk.pop());
+            }
+            datas.put( d.getId() ,data);
+        }
+
+        for(Func f : p.getFuncs()){
+            STyFunc ty;
+            ArrayList <SType> params_stype = new ArrayList<SType>();
+
+            ParamList params = f.getParamList();
+
+            for( int i=0; i < params.getSize(); i++ ){
+                params.getType(i).accept(this);
+                params_stype.add(stk.pop());
+            }
+
+            SType[] xs = new SType[f.getParamList().getSize() + 1];
+
+            for (Type t : f.getRet())
+                t.accept(this);
+
+
+//            xs[f.getParamList().getSize()] = stk.pop();
+            ty = new STyFunc(xs);
+            env.set(f.getId(), new LocalEnv<SType>(f.getId(),ty));
+        }
+        for(Func f : p.getFuncs()){
+            f.accept(this);
+        }
+        for(String s : logError)
+            System.out.println(s);
+        //env.printTable();
+    }
 
     @Override
     public void visit(Read e) {
@@ -114,8 +153,12 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(TyData e) {
-
-
+        if (datas.containsKey(e.getId()))
+            stk.push(new STyData(e.getId()));
+        else{
+            logError.add( e.getLine() + ", " + e.getCol() + ": O tipo " + e.getId() + " não está definido.");
+            stk.push(tyerr);
+        }
     }
 
     @Override
@@ -267,7 +310,6 @@ public class TypeCheckVisitor extends Visitor {
     @Override
     public void visit(Lvalue_id e) {
 
-        e.accept(this);
         SType t = temp.get(e.getId());
         if(t != null){
             stk.push(t);
@@ -296,19 +338,22 @@ public class TypeCheckVisitor extends Visitor {
         SType tyr = stk.pop();
         SType tyl = stk.pop();
         if((tyr.match(tyint))){
-            if(tyl.match(tyint) || tyl.match(tyfloat)){
+            if(tyl.match(tyint)){
                 stk.push(tyl);
             } else {
-                logError.add((n.getLine() + "," + n.getCol() + "Operador:" +opName+ "não se aplica aos tipos" + tyl.toString() + "e" + tyr.toString()));
+                logError.add((n.getLine() + "," + n.getCol() + " Operador:" +opName+ " não se aplica aos tipos " + tyl.toString() + " e " + tyr.toString()));
                 stk.push(tyerr);
             }
         } else if(tyr.match(tyfloat)){
-            if(tyl.match(tyint) || tyl.match(tyfloat)){
+            if(tyl.match(tyfloat)){
                 stk.push(tyl);
             } else {
-                logError.add((n.getLine() + "," + n.getCol() + "Operador:" +opName+ "não se aplica aos tipos" + tyl.toString() + "e" + tyr.toString()));
+                logError.add((n.getLine() + "," + n.getCol() + " Operador:" +opName+ " não se aplica aos tipos " + tyl.toString() + " e " + tyr.toString()));
                 stk.push(tyerr);
             }
+        } else{
+            logError.add((n.getLine() + "," + n.getCol() + " Operador:" +opName+ " não se aplica aos tipos " + tyl.toString() + " e " + tyr.toString()));
+            stk.push(tyerr);
         }
 
     }
@@ -443,7 +488,30 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(Attr e) {
+        String id = "";
+        Lvalue lv = e.getLv();
+        if (lv instanceof Lvalue_dot)
+        {
+            id =  ((Lvalue_dot) lv).getLv().getId() ;
+        } else {
+            id = (lv).getId();
+        }
 
+        if(temp.get(id) != null){
+            lv.accept(this);
+            e.getE().accept(this);
+            SType ste =  stk.pop();
+            SType stlv = stk.pop();
+            if (!stlv.match(ste))
+            {
+                logError.add( e.getLine() + ", " + e.getCol() + ": A variavel " + id + " foi declarada como " + stlv.toString() + " e esta sendo atribuido uma expressao do tipo " + ste.toString() );
+                stk.push(tyerr);
+            }
+        }
+        else{
+            e.getE().accept(this);
+            temp.set(id, stk.pop());
+        }
     }
 
     @Override
@@ -522,7 +590,7 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(Decl e) {
-
+        e.getType().accept(this);
     }
 
     @Override
