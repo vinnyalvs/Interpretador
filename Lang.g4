@@ -63,7 +63,7 @@ sexp:	DENY sexp #deny
 pexp:	lvalue #pexp_lvalue
 	|	OP_PARENTHESIS exp CL_PARENTHESIS #parenthesis_exp
 	|	NEW  type (OP_SQBRACKET exp CL_SQBRACKET)? #new
-	|	ID OP_PARENTHESIS (exps)? CL_PARENTHESIS OP_SQBRACKET exp  #pexp_func
+	|	ID OP_PARENTHESIS (exps)? CL_PARENTHESIS OP_SQBRACKET exp CL_SQBRACKET #pexp_func
 ;
 lvalue:	ID #lvalue_id
 	|	lvalue OP_SQBRACKET exp CL_SQBRACKET #lvalue_array
