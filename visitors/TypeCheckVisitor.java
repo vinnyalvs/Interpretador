@@ -115,6 +115,7 @@ public class TypeCheckVisitor extends Visitor {
     @Override
     public void visit(TyData e) {
 
+
     }
 
     @Override
@@ -122,15 +123,68 @@ public class TypeCheckVisitor extends Visitor {
 
     }
 
-    public void visit(Func f){}
+    public void visit(Func f){
+        retCheck = false;
+        temp = env.get(f.getId());
+
+        ParamList params = f.getParamList();
+        // Transformar os Type dos params para SType
+
+        ArrayList <SType> params_stype = new ArrayList<SType>();
+
+        for( int i=0; i < params.getSize(); i++ ){
+            params.getType(i).accept(this);
+            params_stype.add(stk.pop());
+        }
+
+        for( int i=0; i < params.getSize(); i++ ){
+            temp.set( params.getId(i),params_stype.get(i));
+        }
+
+
+        CmdList cmds = f.getBody();
+        for( Cmd c : cmds.getCmdList()){
+            c.accept(this);
+        }
+
+        if(!retCheck){
+            logError.add( f.getLine() + ", " + f.getCol() + ": Função " + f.getId() + " deve retornar algum valor.");
+        }
+    }
 
     @Override
     public void visit(If e) {
+        boolean rt;
+        e.getTest().accept(this);
+        if(stk.pop().match(tybool)){
+            retCheck = false;
+            e.getThen().accept(this);
+            rt = retCheck;
+            retCheck = rt;
+        }else{
+            logError.add( e.getLine() + ", " + e.getCol() + ": Expressão de teste do IF deve ter tipo Bool");
+        }
 
     }
 
     @Override
     public void visit(If_else e) {
+        boolean rt, re;
+        re = true;
+        e.getTest().accept(this);
+        if(stk.pop().match(tybool)){
+            retCheck = false;
+            e.getThen().accept(this);
+            rt = retCheck;
+            if(e.getElse() != null){
+                retCheck = false;
+                e.getElse().accept(this);
+                re = retCheck;
+            }
+            retCheck = rt && re;
+        }else{
+            logError.add( e.getLine() + ", " + e.getCol() + ": Expressão de teste do IF deve ter tipo Bool");
+        }
 
     }
 
@@ -192,7 +246,7 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(LiteralTrue e) {
-
+        stk.push(tybool);
     }
 
     @Override
@@ -213,12 +267,30 @@ public class TypeCheckVisitor extends Visitor {
     @Override
     public void visit(Lvalue_id e) {
 
+        e.accept(this);
+        SType t = temp.get(e.getId());
+        if(t != null){
+            stk.push(t);
+        } else {
+            logError.add(e.getLine() + ", " + e.getCol() + ": Variável não declarada " + e.getId());
+            stk.push(tyerr);
+        }
+
     }
 
     @Override
     public void visit(Minus e) {
+        e.getE().accept(this);
+        SType tyr = stk.pop();
+        if(tyr.match(tyint) || tyr.match(tyfloat)   ){
+            stk.push(tyr);
+        }else{
+            logError.add( e.getLine() + ", " + e.getCol() + ": Operador - não se aplica ao tipo " + tyr.toString() );
+            stk.push(tyerr);
+        }
 
-    }
+     }
+
 
     private void typeArithmeticBinOp(Node n,String opName){
         SType tyr = stk.pop();
@@ -271,6 +343,29 @@ public class TypeCheckVisitor extends Visitor {
     @Override
     public void visit(New e) {
 
+        e.getT().accept(this);
+
+        if(e.getE() != null){
+            e.getE().accept(this);
+            if(!stk.pop().match(tyint)){
+                logError.add(e.getLine() + ", " + e.getCol() + ": Index must be integer.");
+            }
+        }
+
+        // TODO tipo data???
+
+        /*if (e.getE() == null && e.getT() instanceof TyData)
+        {
+            String data_id = ((TyData) e.getT()).getId();
+            HashMap<String, Object> newVar = new HashMap<String, Object>();
+            for (Decl d : datas.get(data_id).getDeclList() )
+            {
+                d.getType().accept(this);
+                newVar.put (d.getId() , operands.pop() );
+            }
+            operands.push(newVar);
+        } */
+
 
     }
 
@@ -291,7 +386,7 @@ public class TypeCheckVisitor extends Visitor {
     }
 
     @Override
-    public void visit(ParamList e) {
+    public void visit(ParamList e) { // FEITO NO FUNC
 
     }
 
@@ -352,13 +447,59 @@ public class TypeCheckVisitor extends Visitor {
     }
 
     @Override
-    public void visit(BinOP e) {
+    public void visit(BinOP e) { // Não é visitado
 
     }
 
     @Override
     public void visit(Call e) {
 
+        ArrayList <SType> params_stype = new ArrayList<SType>();
+
+        ExprList args_params = e.getArgs();
+        ArrayList <Expr> args_expr= args_params.getExprList();
+        for( int i=0; i < args_expr.size() ; i++ ){
+            args_expr.get(i).accept(this);
+            params_stype.add(stk.pop());
+        } // Tipos dos params
+
+        // Tipos dos retornos
+
+        LocalEnv<SType> f = env.get(e.getId());
+        if(f != null){ // Função foi declarada
+            e.getArgs().accept(this);
+            STyFunc tf = (STyFunc) f.getFuncType();
+
+            if(tf.getTypes().length == e.getRets().size()) {
+
+                for(int i = e.getRets().size()-1; i >= 0 ; i--) {
+                    String id = "";
+
+                    // È desse jeito pq o código é gambiarrado e o lvalue dot retorna o próprio id em getId()
+                    Lvalue lv = e.getRets().get(i);
+                    if (lv instanceof Lvalue_dot)
+                    {
+                        id =  ((Lvalue_dot) lv).getLv().getId() ;
+                    } else {
+                        id = (lv).getId();
+                    }
+                    if(temp.get(id) != null){ //Variável ja foi declarada
+                        lv.accept(this);
+                        SType type_return = stk.pop();
+                        if (!type_return.match(tf.getTypes()[i])) {
+                            logError.add(e.getLine() + ", " + e.getCol() + ": Variável " + id + "não é do tipo " + tf.getTypes()[i].toString() );
+                        }
+                    } else {
+                        temp.set(id, tf.getTypes()[i]); // Declaramos nova variável
+                    }
+
+                }
+            } else {
+                logError.add(e.getLine() + ", " + e.getCol() + ": Número de retornos é diferente do número especificado: " + e.getId());
+                stk.push(tyerr);
+            }
+
+        }
     }
 
     @Override
@@ -375,7 +516,7 @@ public class TypeCheckVisitor extends Visitor {
     }
 
     @Override
-    public void visit(Data e) {
+    public void visit(Data e) { // Não é necessário
 
     }
 

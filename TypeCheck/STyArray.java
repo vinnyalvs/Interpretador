@@ -2,8 +2,6 @@ package TypeCheck;
 
 public class STyArray extends SType {
 
-    private static STyArray st = new STyArray(a);
-
     private SType a;
 
     public STyArray(SType t){
@@ -19,9 +17,9 @@ public class STyArray extends SType {
         this.a = a;
     }
 
-    public static STyF newSTyInt(){
+   /* public static SType newSTyArray(){
         return st;
-    }
+    } */
 
 
 
