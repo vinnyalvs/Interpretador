@@ -57,12 +57,15 @@ public class TypeCheckVisitor extends Visitor {
 
             ParamList params = f.getParamList();
 
+            String id = (params.getSize() > 0 ?  f.getId() + "__" : f.getId() );
+
             for( int i=0; i < params.getSize(); i++ ){
                 params.getType(i).accept(this);
                 params_stype.add(stk.pop());
+                id += params_stype.get(i).toString();
             }
 
-            SType[] xs = new SType[f.getParamList().getSize() + 1];
+            SType[] xs = new SType[f.getRet().size()];
 
             int i = 0;
             for (Type t : f.getRet()) {
@@ -73,7 +76,8 @@ public class TypeCheckVisitor extends Visitor {
 //            xs[f.getParamList().getSize()] = stk.pop();
             ty = new STyFunc(xs);
             ty.setTy(xs);
-            env.set(f.getId(), new LocalEnv<SType>(f.getId(),ty));
+            f.setId(id);
+            env.set(id, new LocalEnv<SType>(id,ty));
         }
         for(Func f : p.getFuncs()){
             f.accept(this);
@@ -193,7 +197,7 @@ public class TypeCheckVisitor extends Visitor {
             c.accept(this);
         }
 
-        if(!retCheck){
+        if(!retCheck && f.getRet().size() > 0){
             logError.add( f.getLine() + ", " + f.getCol() + ": Função " + f.getId() + " deve retornar algum valor.");
         }
     }
@@ -238,10 +242,10 @@ public class TypeCheckVisitor extends Visitor {
     public void visit(Iterate e) {
         e.getTest().accept(this);
         SType o = stk.pop();
-        if(o.match(tybool) || o.match(tyint)){
+        if(o.match(tyint)){
             e.getBody().accept(this);
         }else{
-            logError.add( e.getLine() + ", " + e.getCol() + ": Expressão de teste do Iterate deve ter tipo Bool Ou Inteiro");
+            logError.add( e.getLine() + ", " + e.getCol() + ": Parametro do Iterate deve ter tipo Inteiro");
         }
 
     }
@@ -303,6 +307,18 @@ public class TypeCheckVisitor extends Visitor {
     @Override
     public void visit(Lvalue_array e) {
 
+        SType t = temp.get(e.getId());
+        if(t != null){
+            stk.push(t);
+        } else {
+            logError.add(e.getLine() + ", " + e.getCol() + ": Variável não declarada " + e.getId());
+            stk.push(tyerr);
+            return;
+        }
+        e.getExp().accept(this);
+        SType st = stk.pop();
+        if (!st.match(tyint))
+            logError.add(e.getLine() + ", " + e.getCol() + ": Indice do array deve ser inteiro, " + st.toString() + " fornecido");
     }
 
     @Override
@@ -410,28 +426,42 @@ public class TypeCheckVisitor extends Visitor {
 
         e.getT().accept(this);
 
-        if(e.getE() != null){
-            e.getE().accept(this);
-            if(!stk.pop().match(tyint)){
-                logError.add(e.getLine() + ", " + e.getCol() + ": Index must be integer.");
-            }
-        }
-
-        // TODO tipo data???
-
-        /*if (e.getE() == null && e.getT() instanceof TyData)
+        if (e.getT() instanceof TyData)
         {
             String data_id = ((TyData) e.getT()).getId();
-            HashMap<String, Object> newVar = new HashMap<String, Object>();
-            for (Decl d : datas.get(data_id).getDeclList() )
+            if (!datas.containsKey(data_id))
             {
-                d.getType().accept(this);
-                newVar.put (d.getId() , operands.pop() );
+                stk.push(tyerr);
+                return;
             }
-            operands.push(newVar);
-        } */
 
+            if (e.getE() != null)
+            {
+                e.getE().accept(this);
+                SType expr = stk.pop();
 
+                if (!expr.match(tyint))
+                {
+                    logError.add( e.getLine() + ", " + e.getCol() + ": Tamanho do array deve ser inteiro, " + expr.toString() +" fornecido");
+                    stk.push(tyerr);
+                }
+                else
+                    stk.push(new STyArray(stk.pop()));
+            }
+        }
+        else
+        {
+            if(e.getE() != null){
+                e.getE().accept(this);
+                SType st = stk.pop();
+                if(!st.match(tyint)){
+                    logError.add( e.getLine() + ", " + e.getCol() + ": Tamanho do array deve ser inteiro, " + st.toString() +" fornecido");
+                    stk.push(tyerr);
+                }
+                else
+                    stk.push(new STyArray(st));
+            }
+        }
     }
 
     @Override
@@ -458,21 +488,23 @@ public class TypeCheckVisitor extends Visitor {
     @Override
     public void visit(PexpFunc e) {
 
-        if (env.get(e.getId()) == null)
-        {
-            logError.add( e.getLine() + ", " + e.getCol() + ": Função " + e.getId() + " não declarada");
-            stk.push(tyerr);
-            return;
-        }
-
-        STyFunc st = (STyFunc) env.get(e.getId()).getFuncType();
-        SType[] params = st.getTypes();
         int i = 0;
+        String f_id = (e.getEList().getExprList().size() > 0 ?  e.getId() + "__" : e.getId() );
         for (Expr exp : e.getEList().getExprList())
         {
             exp.accept(this);
-            params[i++].match(stk.pop());
+            f_id += stk.pop().toString();
+            i++;
         }
+
+        if (env.get(f_id) == null)
+        {
+            logError.add( e.getLine() + ", " + e.getCol() + ": Função " + f_id + " não declarada");
+            stk.push(tyerr);
+            return;
+        }
+        STyFunc st = (STyFunc) env.get(f_id).getFuncType();
+        SType[] params = st.getTypes();
 
         e.getIndex().accept(this);
         SType indType = stk.pop();
@@ -484,14 +516,14 @@ public class TypeCheckVisitor extends Visitor {
                 if (index.getValue() < params.length)
                     stk.push (params[index.getValue()]);
                 else{
-                    logError.add( e.getLine() + ", " + e.getCol() + ": Indice de retorno na chamada de " + e.getId() +" fora dos limites " + index.getValue() +" para o tamanho "+ params.length);
+                    logError.add( e.getLine() + ", " + e.getCol() + ": Indice de retorno na chamada de " + f_id +" fora dos limites " + index.getValue() +" para o tamanho "+ params.length);
                     stk.push(tyerr);
                 }
             }
         }
         else
         {
-            logError.add( e.getLine() + ", " + e.getCol() + ": Indice de retorno na chamada de " + e.getId() +" deve ser inteiro, " + indType.toString() +" fornecido");
+            logError.add( e.getLine() + ", " + e.getCol() + ": Indice de retorno na chamada de " + f_id +" deve ser inteiro, " + indType.toString() +" fornecido");
             stk.push(tyerr);
         }
     }
@@ -570,6 +602,8 @@ public class TypeCheckVisitor extends Visitor {
             e.getE().accept(this);
             SType ste =  stk.pop();
             SType stlv = stk.pop();
+            if (stlv instanceof STyArray)
+                stlv = ((STyArray) stlv).getArg();
             if (!stlv.match(ste))
             {
                 String idPrint = id;
@@ -598,14 +632,18 @@ public class TypeCheckVisitor extends Visitor {
 
         ExprList args_params = e.getArgs();
         ArrayList <Expr> args_expr= args_params.getExprList();
+
+        String f_id = (args_expr.size() > 0 ?  e.getId() + "__" : e.getId() );
+
         for( int i=0; i < args_expr.size() ; i++ ){
             args_expr.get(i).accept(this);
             params_stype.add(stk.pop());
+            f_id += params_stype.get(i).toString();
         } // Tipos dos params
 
         // Tipos dos retornos
 
-        LocalEnv<SType> f = env.get(e.getId());
+        LocalEnv<SType> f = env.get(f_id);
         if(f != null){ // Função foi declarada
             e.getArgs().accept(this);
             STyFunc tf = (STyFunc) f.getFuncType();
@@ -638,7 +676,10 @@ public class TypeCheckVisitor extends Visitor {
                 logError.add(e.getLine() + ", " + e.getCol() + ": Número de retornos é diferente do número especificado: " + e.getId());
                 stk.push(tyerr);
             }
-
+        }
+        else
+        {
+            logError.add(e.getLine() + ", " + e.getCol() + ": Função " + f_id +" não declarada");
         }
     }
 

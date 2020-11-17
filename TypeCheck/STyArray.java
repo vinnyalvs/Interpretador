@@ -4,9 +4,8 @@ public class STyArray extends SType {
 
     private SType a;
 
-    public STyArray(SType t){
-        a = t;
-
+    public STyArray(SType a) {
+        this.a = a;
     }
 
     public SType getArg() {

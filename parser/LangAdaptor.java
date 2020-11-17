@@ -48,10 +48,7 @@ public class LangAdaptor implements ParseAdaptor {
 //
 //            ((Node)s).accept(iv);
 
-            SuperNode node = new Node();
-
-            return node;
-
+            return s;
 
         }
         catch(RuntimeException e) {

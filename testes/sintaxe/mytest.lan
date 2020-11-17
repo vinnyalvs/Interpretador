@@ -1,14 +1,12 @@
-data Ponto {
-   x :: Float;
-   y :: Float;
+fat(n :: Int) : Int{
+   if(n == 0){
+   }else{
+       fat(1);
+   }
 }
 
-main(l :: Int){
-   p = new Ponto;
-   z = new Int[][2*l];
-   p.k = 3.2;
-
-   w.k = 'c';
-
-   f = 55;
+main(){
+  fat(0)<x>;
+  print x;
+  y = null;
 }
