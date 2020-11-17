@@ -563,7 +563,16 @@ public class CreateASTFromParser extends LangBaseVisitor<SuperNode> {
 
     @Override
     public SuperNode visitPexp_func(LangParser.Pexp_funcContext ctx) {
-        return super.visitPexp_func(ctx);
+        int line = ctx.getStart().getLine();
+        int column = ctx.getStart().getCharPositionInLine();
+
+        ExprList eList = (ExprList) ctx.exps().accept(this);
+        Expr index = (Expr) ctx.exp().accept(this);
+        String id = ctx.ID().getText();
+
+        PexpFunc pexp = new PexpFunc(line, column, index, eList, id);
+
+        return pexp;
     }
 
     @Override

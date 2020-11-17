@@ -64,12 +64,15 @@ public class TypeCheckVisitor extends Visitor {
 
             SType[] xs = new SType[f.getParamList().getSize() + 1];
 
-            for (Type t : f.getRet())
+            int i = 0;
+            for (Type t : f.getRet()) {
                 t.accept(this);
-
+                xs[i++] = stk.pop();
+            }
 
 //            xs[f.getParamList().getSize()] = stk.pop();
             ty = new STyFunc(xs);
+            ty.setTy(xs);
             env.set(f.getId(), new LocalEnv<SType>(f.getId(),ty));
         }
         for(Func f : p.getFuncs()){
@@ -304,7 +307,24 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(Lvalue_dot e) {
+        STyData lvType = (STyData) temp.get(e.getLv().getId());
 
+        if (lvType == null)
+        {
+            logError.add(e.getLine() + ", " + e.getCol() + ": Variável não declarada " + e.getId());
+            stk.push(tyerr);
+            return;
+        }
+
+        STyData data = datas.get(lvType.getId());
+
+        if (data.getVars().get(e.getId()) != null)
+            stk.push ( data.getVars().get(e.getId()) );
+        else
+        {
+            logError.add(e.getLine() + ", " + e.getCol() + ": O data " + lvType.getId() +" não possui o atributo " + e.getId());
+            stk.push(tyerr);
+        }
     }
 
     @Override
@@ -436,6 +456,47 @@ public class TypeCheckVisitor extends Visitor {
     }
 
     @Override
+    public void visit(PexpFunc e) {
+
+        if (env.get(e.getId()) == null)
+        {
+            logError.add( e.getLine() + ", " + e.getCol() + ": Função " + e.getId() + " não declarada");
+            stk.push(tyerr);
+            return;
+        }
+
+        STyFunc st = (STyFunc) env.get(e.getId()).getFuncType();
+        SType[] params = st.getTypes();
+        int i = 0;
+        for (Expr exp : e.getEList().getExprList())
+        {
+            exp.accept(this);
+            params[i++].match(stk.pop());
+        }
+
+        e.getIndex().accept(this);
+        SType indType = stk.pop();
+        if (indType.match(this.tyint))
+        {
+            if (e.getIndex() instanceof LiteralInt)
+            {
+                LiteralInt index = (LiteralInt) e.getIndex();
+                if (index.getValue() < params.length)
+                    stk.push (params[index.getValue()]);
+                else{
+                    logError.add( e.getLine() + ", " + e.getCol() + ": Indice de retorno na chamada de " + e.getId() +" fora dos limites " + index.getValue() +" para o tamanho "+ params.length);
+                    stk.push(tyerr);
+                }
+            }
+        }
+        else
+        {
+            logError.add( e.getLine() + ", " + e.getCol() + ": Indice de retorno na chamada de " + e.getId() +" deve ser inteiro, " + indType.toString() +" fornecido");
+            stk.push(tyerr);
+        }
+    }
+
+    @Override
     public void visit(Print e) {
         e.getExpr().accept(this);
         stk.pop();
@@ -493,6 +554,13 @@ public class TypeCheckVisitor extends Visitor {
         if (lv instanceof Lvalue_dot)
         {
             id =  ((Lvalue_dot) lv).getLv().getId() ;
+            if (temp.get(id) == null)
+            {
+                logError.add( e.getLine() + ", " + e.getCol() + ": Variavel " + id +" não declarada.");
+                stk.push(tyerr);
+                return;
+            }
+
         } else {
             id = (lv).getId();
         }
@@ -504,7 +572,11 @@ public class TypeCheckVisitor extends Visitor {
             SType stlv = stk.pop();
             if (!stlv.match(ste))
             {
-                logError.add( e.getLine() + ", " + e.getCol() + ": A variavel " + id + " foi declarada como " + stlv.toString() + " e esta sendo atribuido uma expressao do tipo " + ste.toString() );
+                String idPrint = id;
+                if (lv instanceof Lvalue_dot)
+                    idPrint += "." + lv.getId();
+
+                logError.add( e.getLine() + ", " + e.getCol() + ": A variavel " + idPrint + " foi declarada como " + stlv.toString() + " e esta sendo atribuido uma expressao do tipo " + ste.toString() );
                 stk.push(tyerr);
             }
         }

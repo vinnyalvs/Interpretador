@@ -42,6 +42,7 @@ public abstract class Visitor {
     public abstract void visit(New e);
     public abstract void visit(Noeq e);
     public abstract void visit(ParamList e);
+    public abstract void visit(PexpFunc e);
     public abstract void visit(Print e);
     public abstract void visit(Program e);
     public abstract void visit(Read e);

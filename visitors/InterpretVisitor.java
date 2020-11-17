@@ -576,6 +576,11 @@ public class InterpretVisitor extends Visitor{
     }
 
     @Override
+    public void visit(PexpFunc e) {
+
+    }
+
+    @Override
     public void visit(Print e) {
         try{
             e.getExpr().accept(this);
