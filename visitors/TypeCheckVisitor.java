@@ -1,3 +1,8 @@
+/*
+   Edson Lopes da Silva Júnior 201635023
+   Vinicius Alberto Alves da Silva 201665558C
+*/
+
 package visitors;
 import TypeCheck.*;
 import ast.*;
@@ -471,7 +476,6 @@ public class TypeCheckVisitor extends Visitor {
         SType tyr = stk.pop();
         SType tyl = stk.pop();
 //        if( (tyr.match(tyint) || tyr.match(tyfloat) || tyr.match(tybool) ||  tyr.match(tynull)  ) && (tyl.match(tyint) || tyr.match(tyfloat))  || tyl.match(tybool) ||  tyl.match(tynull) ){
-        // TODO quando ouver tipo expressões, checar se dois lados são expr
         if(tyl.match(tyr))
             stk.push(tybool);
         else{
@@ -547,7 +551,6 @@ public class TypeCheckVisitor extends Visitor {
         SType tyr = stk.pop();
         SType tyl = stk.pop();
 //        if( (tyr.match(tyint) || tyr.match(tyfloat) || tyr.match(tybool) ||  tyr.match(tynull)  ) && (tyl.match(tyint) || tyr.match(tyfloat))  || tyl.match(tybool) ||  tyl.match(tynull) ){
-        // TODO quando ouver tipo expressões, checar se dois lados são expr
         if(tyl.match(tyr))
             stk.push(tybool);
         else{
