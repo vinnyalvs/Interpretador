@@ -8,6 +8,7 @@ import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -15,16 +16,18 @@ public class JavaVisitor extends Visitor {
 
     private STGroup groupTemplate;
     private ST type, stmt, expr;
-    private List<ST> funcs, params;
+    private List<ST> funcs, params, datas;
+    private HashMap<String, STyData> datas_map;
 
     private String fileName;
 
     TyEnv<LocalEnv<SType>> env;
 
-    public JavaVisitor(String fileName, TyEnv<LocalEnv<SType>> env) {
+    public JavaVisitor(String fileName, TyEnv<LocalEnv<SType>> env, HashMap<String, STyData> datas) {
         groupTemplate = new STGroupFile("./template/java.stg");
         this.fileName = fileName;
         this.env = env;
+        this.datas_map = datas;
     }
 
     @Override
@@ -32,6 +35,12 @@ public class JavaVisitor extends Visitor {
         ST template = groupTemplate.getInstanceOf("program");
 
         template.add("name", fileName);
+        datas = new ArrayList<ST>();
+        for(Data d : p.getDatas() ) {
+            d.accept(this);
+        }
+        template.add("data", datas);
+
         funcs = new ArrayList<ST>();
         for(Func f : p.getFuncs()) {
             f.accept(this);
@@ -85,7 +94,7 @@ public class JavaVisitor extends Visitor {
     }
 
     @Override
-    public void visit(BinOP e) {
+    public void visit(BinOP e) { // não visita
 
     }
 
@@ -95,7 +104,7 @@ public class JavaVisitor extends Visitor {
     }
 
     @Override
-    public void visit(Cmd e) {
+    public void visit(Cmd e) { //não visita
 
     }
 
@@ -109,12 +118,26 @@ public class JavaVisitor extends Visitor {
 
     @Override
     public void visit(Data e) {
+        ST data = groupTemplate.getInstanceOf("data");
+        data.add("id", e.getId());
 
+        STyData data_aux = datas_map.get(e.getId());
+
+        for(Decl d : e.getDeclList()){
+            d.accept(this);
+            ST decl = groupTemplate.getInstanceOf("param");
+            decl.add("name", d.getId());
+            processSType(data_aux.getVars().get(d.getId()));
+            decl.add("type", type);
+            data.add("decl", decl);
+
+        }
+        datas.add(data);
     }
 
     @Override
     public void visit(Decl e) {
-
+        ST aux = groupTemplate.getInstanceOf("decl");
     }
 
     @Override
@@ -223,16 +246,16 @@ public class JavaVisitor extends Visitor {
 
     @Override
     public void visit(Iterate e) { // TODO relatar o iterate _aux
-        ST aux = groupTemplate.getInstanceOf("if");
+        ST aux = groupTemplate.getInstanceOf("iterate");
         e.getTest().accept(this);
         aux.add("expr", expr);
         e.getBody().accept(this);
         for(Cmd cmd :  ((CmdList) e.getBody()).getCmdList()){
             cmd.accept(this);
-            stmt = aux;
             aux.add("stmt", stmt);
-
+            stmt = aux;
         }
+
 
 
     }
@@ -334,6 +357,11 @@ public class JavaVisitor extends Visitor {
 
     @Override
     public void visit(New e) {
+        ST aux = groupTemplate.getInstanceOf("new");
+        e.getT().accept(this);
+        aux.add("type",type);
+        expr = aux;
+        //aux.add("id",((TyData)e.getT()).getId());
 
     }
 
@@ -384,31 +412,36 @@ public class JavaVisitor extends Visitor {
 
     @Override
     public void visit(TyArray e) {
-
+        ST aux = groupTemplate.getInstanceOf("array_type");
+        e.getType().accept(this);
+        aux.add("type", type);
+        type = aux;
     }
 
     @Override
     public void visit(TyBool e) {
-
+        type = groupTemplate.getInstanceOf("boolean_type");
     }
 
     @Override
     public void visit(TyChar e) {
-
+        type = groupTemplate.getInstanceOf("char_type");
     }
 
     @Override
     public void visit(TyFloat e) {
-
+        type = groupTemplate.getInstanceOf("float_type");
     }
 
     @Override
     public void visit(TyInt e) {
-
+        type = groupTemplate.getInstanceOf("int_type");
     }
 
     @Override
     public void visit(TyData e) {
+        type = groupTemplate.getInstanceOf("data_type");
+        type.add("id",e.getId());
 
     }
 
@@ -436,3 +469,5 @@ public class JavaVisitor extends Visitor {
     }
 
 }
+
+

@@ -6,6 +6,7 @@
 package parser;
 
 import TypeCheck.LocalEnv;
+import TypeCheck.STyData;
 import TypeCheck.SType;
 import TypeCheck.TyEnv;
 import parser.LangLexer;
@@ -17,6 +18,8 @@ import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.runtime.TokenSource;
 
 import java.io.IOException;
+import java.util.HashMap;
+
 import visitors.*;
 
 
@@ -52,7 +55,8 @@ public class LangAdaptor implements ParseAdaptor {
                 tc.printErros();
             } else {
                 TyEnv<LocalEnv<SType>> env = tc.getEnv();
-                JavaVisitor jv = new JavaVisitor(path.substring(0, path.length()-4),env);
+                HashMap<String, STyData> datas = tc.getDatas();
+                JavaVisitor jv = new JavaVisitor(path.substring(0, path.length()-4),env,datas );
                 ((Node)s).accept(jv);
             }
 

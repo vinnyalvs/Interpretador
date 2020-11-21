@@ -1,11 +1,14 @@
 group java;
 
-program(name, funcs) ::= <<
+program(name, funcs, data) ::= <<
 import java.util.ArrayList;
 import java.util.Scanner;
 
+<data; separator=";\n">
+
 public class <name> {
     Scanner scanner = new Scanner(System.in);
+    int _aux;
     <funcs; separator="\n\n">
   
     public static void main(String args[]) {
@@ -17,10 +20,19 @@ public class <name> {
 func(type, name, params, decl, stmt) ::= <<
 public static <if(type)><type><else>void<endif> <name>(<params; separator=", ">) {
     <if(decl)><decl; separator=";\n">;<endif>
-    <stmt;  separator=";\n">
+    <stmt;  separator=";\n">;
 }
 >>
 
+data(id,decl) ::= <<
+class <id> {
+    <decl; separator=";\n">;
+}
+>>
+
+public_decl(decl) ::= <<
+ public <decl>
+ >>
 
 param(type, name) ::= "<type> <name>"
 
@@ -29,17 +41,20 @@ int_type() ::= "int"
 float_type() ::= "float"
 boolean_type() ::= "boolean"
 char_type() ::= "char"
+data_type(id) ::= "<id>"
 null() ::= "null"
 
-print(expr) ::= "System.out.print(<expr>);"
-read(expr) ::= "<expr> = scanner.next()"
+print(expr) ::= "System.out.print(<expr>)"
+read(expr) ::= "<expr> = scanner.nextInt()"
 return(expr) ::= "return <expr>;"
 
 iterate(expr, stmt) ::= <<
-<text_iterate>
+_aux = <expr>;
+for(int _i=0; _i \< _aux; _i++ ) {
+    <stmt_list(stmt)>;
+}
 >>
 plus() ::= "+"
-text_iterate() ::= "for(int i=aux; i < aux; i = 23) {"
 if(expr, thn, els) ::= <<
 if(<expr>) {
     <thn>
@@ -49,15 +64,16 @@ if(<expr>) {
 <endif>
 >>
 
-stmt_list(stmt1, stmt2) ::= <<
-<stmt1>
-<stmt2>
+stmt_list(stmt) ::= <<
+    <stmt;  separator=";\n">
 >>
+
 
 attr(var, expr) ::= "<var> = <expr>"
 lvalue_id(name) ::= "<name>"
 lvalue(name, array) ::= "<name><array>"
 array_access(expr) ::= "[<expr>]"
+new(type) ::= "new <data_type(type)>()"
 
 boolean_expr(value) ::= "<value>"
 float_expr(value) ::= "<value>"

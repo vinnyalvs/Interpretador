@@ -1,14 +1,13 @@
+data Ponto {
+   x :: Float;
+   y :: Float;
+}
+
 func(){
    print true!=false;
 }
 
 main(){
-   x = 10;
-   x = 12342;
-   iterate (10){
-       x = 10;
-     }
-   }
-
+ p = new Ponto;
 
 }
