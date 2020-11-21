@@ -1,0 +1,83 @@
+group java;
+
+program(name, funcs) ::= <<
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class <name> {
+    Scanner scanner = new Scanner(System.in);
+    <funcs; separator="\n\n">
+  
+    public static void main(String args[]) {
+        inicio();
+    }
+}
+>>
+
+func(type, name, params, decl, stmt) ::= <<
+public static <if(type)><type><else>void<endif> <name>(<params; separator=", ">) {
+    <if(decl)><decl; separator=";\n">;<endif>
+    <stmt;  separator=";\n">
+}
+>>
+
+
+param(type, name) ::= "<type> <name>"
+
+array_type(type) ::= "<type>[]"
+int_type() ::= "int"
+float_type() ::= "float"
+boolean_type() ::= "boolean"
+char_type() ::= "char"
+null() ::= "null"
+
+print(expr) ::= "System.out.print(<expr>);"
+read(expr) ::= "<expr> = scanner.next()"
+return(expr) ::= "return <expr>;"
+
+iterate(expr, stmt) ::= <<
+<text_iterate>
+>>
+plus() ::= "+"
+text_iterate() ::= "for(int i=aux; i < aux; i = 23) {"
+if(expr, thn, els) ::= <<
+if(<expr>) {
+    <thn>
+} <if(els)>else {
+    <els>
+}
+<endif>
+>>
+
+stmt_list(stmt1, stmt2) ::= <<
+<stmt1>
+<stmt2>
+>>
+
+attr(var, expr) ::= "<var> = <expr>"
+lvalue_id(name) ::= "<name>"
+lvalue(name, array) ::= "<name><array>"
+array_access(expr) ::= "[<expr>]"
+
+boolean_expr(value) ::= "<value>"
+float_expr(value) ::= "<value>"
+int_expr(value) ::= "<value>"
+char_expr(value) ::= "<value>"
+
+new_array(var, type, expr) ::= "<var> = new <type>[<expr>];"
+
+call(name, args) ::= <<<name>(<args; separator=", ">)>>
+
+mul_expr(left_expr, right_expr) ::= "(<left_expr> * <right_expr>)"
+div_expr(left_expr, right_expr) ::= "(<left_expr> / <right_expr>)"
+mod_expr(left_expr, right_expr) ::= "(<left_expr> % <right_expr>)"
+add_expr(left_expr, right_expr) ::= "(<left_expr> + <right_expr>)"
+sub_expr(left_expr, right_expr) ::= "(<left_expr> - <right_expr>)"
+
+
+lt_expr(left_expr, right_expr) ::= "(<left_expr> \< <right_expr>)"
+equals_expr(left_expr, right_expr) ::= "(<left_expr> == <right_expr>)"
+notequals_expr(left_expr, right_expr) ::= "(<left_expr> != <right_expr>)"
+and_expr(left_expr, right_expr) ::= "(<left_expr> && <right_expr>)"
+not_expr(expr) ::= "!<expr>"
+minus_expr(expr) ::= "(-<expr>)"

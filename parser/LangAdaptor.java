@@ -5,6 +5,9 @@
 
 package parser;
 
+import TypeCheck.LocalEnv;
+import TypeCheck.SType;
+import TypeCheck.TyEnv;
 import parser.LangLexer;
 import parser.LangParser;
 import ast.Node;
@@ -43,6 +46,15 @@ public class LangAdaptor implements ParseAdaptor {
             TypeCheckVisitor tc = new TypeCheckVisitor();
 
             ((Node)s).accept(tc);
+
+            if(tc.getNumErros() > 0) {
+                System.out.println("Erro durante Analise Semantica!");
+                tc.printErros();
+            } else {
+                TyEnv<LocalEnv<SType>> env = tc.getEnv();
+                JavaVisitor jv = new JavaVisitor(path.substring(0, path.length()-4),env);
+                ((Node)s).accept(jv);
+            }
 
 //            InterpretVisitor iv = new InterpretVisitor();
 //

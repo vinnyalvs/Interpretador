@@ -1,18 +1,14 @@
-data Ponto {
-   x :: Float;
-   y :: Float;
+func(){
+   print true!=false;
 }
 
-f(x :: Float) : Float{
-   y = 2.3*x  + 1;
-   return y;
-}
+main(){
+   x = 10;
+   x = 12342;
+   iterate (10){
+       x = 10;
+     }
+   }
 
-main(l :: Int){
-   p = new Ponto;
-   z = Quadrado;
-   p.x = f(10)[0];
-   print p.x;
-   read p.y;
-   print p.y;
+
 }

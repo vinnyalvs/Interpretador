@@ -18,7 +18,7 @@ public class Iterate extends Cmd{
         return test;
     }
 
-    public Node getBody() {
+    public Cmd getBody() {
         return body;
     }
 

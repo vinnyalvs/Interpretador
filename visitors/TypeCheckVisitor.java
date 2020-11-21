@@ -35,6 +35,14 @@ public class TypeCheckVisitor extends Visitor {
         logError = new ArrayList<String>();
     }
 
+    public ArrayList<String> getLogError() {
+        return logError;
+    }
+
+    public TyEnv<LocalEnv<SType>> getEnv() {
+        return env;
+    }
+
     public int getNumErros(){
         return logError.size();
     }
