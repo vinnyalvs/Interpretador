@@ -655,6 +655,8 @@ public class TypeCheckVisitor extends Visitor {
             f_id += params_stype.get(i).toString();
         } // Tipos dos params
 
+        e.setF_id(f_id);
+
         // Tipos dos retornos
 
         LocalEnv<SType> f = env.get(f_id);

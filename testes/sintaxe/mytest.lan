@@ -3,11 +3,14 @@ data Ponto {
    y :: Float;
 }
 
-func(){
-   print true!=false;
+func (x :: Int, q :: Bool) : Float {
+    return 0.0;
 }
 
 main(){
- p = new Ponto;
+  y = 10;
+  z = 'q';
+  func (y, true)<x, y>;
+  x = (int) ret[0];
 
 }

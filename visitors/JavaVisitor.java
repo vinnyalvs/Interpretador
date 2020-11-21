@@ -100,7 +100,13 @@ public class JavaVisitor extends Visitor {
 
     @Override
     public void visit(Call e) {
+        ArrayList <SType> params_stype = new ArrayList<SType>();
 
+        ArrayList <Expr> args_expr= e.getArgs().getExprList();
+
+        for( int i=0; i < args_expr.size() ; i++ ){
+            args_expr.get(i).accept(this);
+        } // Tipos dos params
     }
 
     @Override
@@ -199,6 +205,12 @@ public class JavaVisitor extends Visitor {
         for(int i=0; i< paramList.getSize(); i++) {
             keys.remove(paramList.getId(i));
             paramList.getType(i).accept(this);
+
+            ST param = groupTemplate.getInstanceOf("param");
+            param.add("type", type);
+            param.add("name", paramList.getId(i));
+
+            params.add(param);
         }
         fun.add("params", params);
 
@@ -317,7 +329,10 @@ public class JavaVisitor extends Visitor {
 
     @Override
     public void visit(Lvalue_dot e) {
-
+        ST lvalue = groupTemplate.getInstanceOf("lvalue_dot");
+        lvalue.add("name",e.getLv().getId());
+        lvalue.add("attribute",e.getId());
+        expr = lvalue;
     }
 
     @Override
@@ -356,13 +371,17 @@ public class JavaVisitor extends Visitor {
     }
 
     @Override
-    public void visit(New e) {
+    public void visit(New e) { //TODO relatar o new
         ST aux = groupTemplate.getInstanceOf("new");
         e.getT().accept(this);
         aux.add("type",type);
-        expr = aux;
-        //aux.add("id",((TyData)e.getT()).getId());
 
+        if (e.getE() != null)
+        {
+            e.getE().accept(this);
+            aux.add("expr", expr);
+        }
+        expr = aux;
     }
 
     @Override
@@ -460,6 +479,10 @@ public class JavaVisitor extends Visitor {
             processSType(((STyArray) t).getArg());
             aux.add("type", type);
             type = aux;
+        }
+        else if(t instanceof STyData){
+            type = groupTemplate.getInstanceOf("data_type");
+            type.add("id", ((STyData) t).getId());
         }
     }
 

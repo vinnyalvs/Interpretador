@@ -7,8 +7,8 @@ import java.util.Scanner;
 <data; separator=";\n">
 
 public class <name> {
-    Scanner scanner = new Scanner(System.in);
-    int _aux;
+    static Scanner scanner = new Scanner(System.in);
+    static int _aux;
     <funcs; separator="\n\n">
   
     public static void main(String args[]) {
@@ -20,7 +20,7 @@ public class <name> {
 func(type, name, params, decl, stmt) ::= <<
 public static <if(type)><type><else>void<endif> <name>(<params; separator=", ">) {
     <if(decl)><decl; separator=";\n">;<endif>
-    <stmt;  separator=";\n">;
+    <if(stmt)><stmt; separator=";\n">;<endif>
 }
 >>
 
@@ -71,12 +71,13 @@ stmt_list(stmt) ::= <<
 
 attr(var, expr) ::= "<var> = <expr>"
 lvalue_id(name) ::= "<name>"
+lvalue_dot(name,attribute) ::= "<name>.<attribute>"
 lvalue(name, array) ::= "<name><array>"
 array_access(expr) ::= "[<expr>]"
-new(type) ::= "new <data_type(type)>()"
+new(type, expr) ::= "new <data_type(type)><if(expr)>[<expr>]<else>()<endif>"
 
 boolean_expr(value) ::= "<value>"
-float_expr(value) ::= "<value>"
+float_expr(value) ::= "<value>f"
 int_expr(value) ::= "<value>"
 char_expr(value) ::= "<value>"
 
