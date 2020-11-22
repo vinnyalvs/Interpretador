@@ -339,22 +339,42 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(Lvalue_dot e) {
-        STyData lvType = (STyData) temp.get(e.getLv().getId());
+        SType lv_aux = temp.get(e.getLv().getId());
+        STyData lvType;
+        if(lv_aux instanceof STyData) {
+            lvType = (STyData) temp.get(e.getLv().getId());
 
-        if (lvType == null)
-        {
-            logError.add(e.getLine() + ", " + e.getCol() + ": Variável não declarada " + e.getId());
-            stk.push(tyerr);
-            return;
-        }
+            if (lvType == null)
+            {
+                logError.add(e.getLine() + ", " + e.getCol() + ": Variável não declarada " + e.getId());
+                stk.push(tyerr);
+                return;
+            }
 
-        STyData data = datas.get(lvType.getId());
+            STyData data = datas.get(lvType.getId());
 
-        if (data.getVars().get(e.getId()) != null)
-            stk.push ( data.getVars().get(e.getId()) );
-        else
-        {
-            logError.add(e.getLine() + ", " + e.getCol() + ": O data " + lvType.getId() +" não possui o atributo " + e.getId());
+            if (data.getVars().get(e.getId()) != null)
+                stk.push ( data.getVars().get(e.getId()) );
+            else
+            {
+                logError.add(e.getLine() + ", " + e.getCol() + ": O data " + lvType.getId() +" não possui o atributo " + e.getId());
+                stk.push(tyerr);
+            }
+        } else if(lv_aux instanceof STyArray) {
+            STyArray ty_array = (STyArray) temp.get(e.getLv().getId());
+
+
+            STyData data = datas.get(( (STyData) ty_array.getArg()).getId() )  ;
+
+            if (data.getVars().get(e.getId()) != null)
+                stk.push ( data.getVars().get(e.getId()) );
+            else
+            {
+                //logError.add(e.getLine() + ", " + e.getCol() + ": O data " + lvType.getId() +" não possui o atributo " + e.getId());
+                stk.push(tyerr);
+            }
+        } else {
+            logError.add(e.getLine() + ", " + e.getCol() + " Ta errado! ");
             stk.push(tyerr);
         }
     }

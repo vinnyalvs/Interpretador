@@ -150,10 +150,12 @@ public class JavaVisitor extends Visitor {
 
     @Override
     public void visit(CmdList e) {
+        ST aux = groupTemplate.getInstanceOf("stmt_list");
         for(Cmd cmd : e.getCmdList()){
             cmd.accept(this);
-
+            aux.add("stmt",stmt);
         }
+        stmt = aux;
     }
 
     @Override
@@ -210,7 +212,7 @@ public class JavaVisitor extends Visitor {
 
     @Override
     public void visit(Equal e) {
-        ST aux = groupTemplate.getInstanceOf("eq_expr");
+        ST aux = groupTemplate.getInstanceOf("equals_expr");
         e.getL().accept(this);
         aux.add("left_expr", expr);
         e.getR().accept(this);
@@ -291,7 +293,7 @@ public class JavaVisitor extends Visitor {
     }
 
     @Override
-    public void visit(Iterate e) { // TODO relatar o iterate _aux
+    public void visit(Iterate e) { // TODO relatar o iterate _aux // TODO for alinhad
         ST aux = groupTemplate.getInstanceOf("iterate");
         e.getTest().accept(this);
         aux.add("expr", expr);
@@ -319,7 +321,13 @@ public class JavaVisitor extends Visitor {
     @Override
     public void visit(LiteralChar e) {
         expr = groupTemplate.getInstanceOf("char_expr");
-        expr.add("value", e.getValue());
+        String s = String.valueOf( e.getValue());
+        s = s.replaceAll("\\n","\\\\n");
+        s = s.replaceAll("\\r","\\\\r");
+        s = s.replaceAll("\\t","\\\\t");
+        s = s.replaceAll("\\''","\\\\''");
+        s = s.replaceAll("\\\"'","\\\"'");
+        expr.add("value", s);
     }
 
     @Override
@@ -358,13 +366,23 @@ public class JavaVisitor extends Visitor {
 
     @Override
     public void visit(Lvalue_array e) {
-
+        ST lvalue = groupTemplate.getInstanceOf("lvalue_array");
+        lvalue.add("name",e.getLv().getId());
+        e.getExp().accept(this);
+        lvalue.add("expr",expr);
+        expr = lvalue;
     }
 
     @Override
     public void visit(Lvalue_dot e) {
+        ST id = groupTemplate.getInstanceOf("lvalue_id");
+        id.add("name", e.getLv().getId());
+        if(e.getLv() instanceof Lvalue_array){
+            e.getLv().accept(this);
+            id = expr;
+        }
         ST lvalue = groupTemplate.getInstanceOf("lvalue_dot");
-        lvalue.add("name",e.getLv().getId());
+        lvalue.add("name",id);
         lvalue.add("attribute",e.getId());
         expr = lvalue;
     }

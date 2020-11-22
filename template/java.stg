@@ -63,9 +63,9 @@ for(int _i=0; _i \< _aux; _i++ ) {
 plus() ::= "+"
 if(expr, thn, els) ::= <<
 if(<expr>) {
-    <thn>
+    <thn>;
 } <if(els)>else {
-    <els>
+    <els>;
 }
 <endif>
 >>
@@ -80,6 +80,7 @@ lvalue_id(name) ::= "<name>"
 lvalue_dot(name,attribute) ::= "<name>.<attribute>"
 lvalue(name, array) ::= "<name><array>"
 array_access(expr) ::= "[<expr>]"
+lvalue_array(name,expr) ::= "<name>[<expr>]"
 new(type, expr) ::= "new <data_type(type)><if(expr)>[<expr>]<else>()<endif>"
 
 boolean_expr(value) ::= "<value>"
