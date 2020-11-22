@@ -56,7 +56,10 @@ public class LangAdaptor implements ParseAdaptor {
             } else {
                 TyEnv<LocalEnv<SType>> env = tc.getEnv();
                 HashMap<String, STyData> datas = tc.getDatas();
-                JavaVisitor jv = new JavaVisitor(path.substring(0, path.length()-4),env,datas );
+                String [] splitted = path.split("/");
+                String correct_name = splitted[splitted.length -1].substring(0, 1).toUpperCase() + splitted[splitted.length -1].substring(1);
+                correct_name = correct_name.substring(0, correct_name.length()-4);
+                JavaVisitor jv = new JavaVisitor(correct_name,env,datas );
                 ((Node)s).accept(jv);
             }
 
