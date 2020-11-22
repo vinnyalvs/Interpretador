@@ -37,7 +37,8 @@ public class JavaVisitor extends Visitor {
     public void visit(Program p) {
         ST template = groupTemplate.getInstanceOf("program");
 
-        template.add("itr_count", Iterate.itrCount);
+        if (Iterate.itrCount > 0)
+            template.add("itr_count", Iterate.itrCount);
 
         template.add("name", fileName);
         datas = new ArrayList<ST>();

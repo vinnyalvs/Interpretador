@@ -8,8 +8,10 @@ import java.util.Scanner;
 
 public class <name> {
     static Scanner scanner = new Scanner(System.in);
+    <if(itr_count)>
     static int[] _aux = new int[<itr_count>];
     static int[] _i = new int[<itr_count>];
+    <endif>
     static ArrayList\<Object> _ret = new ArrayList\<Object>();
     <funcs; separator="\n\n">
   
