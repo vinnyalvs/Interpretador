@@ -11,13 +11,13 @@ import java.io.*;
 
 public class TestParser {
    private ParseAdaptor adp;
-   private String okSrcs = "testes/sintaxe/certo/";
+   private String okSrcs = "testes/semantica/certo/";
    private File f;
    
    public TestParser(ParseAdaptor adp){
         this.adp = adp;
         f = new File(okSrcs);
-    //     runOkTests();
+       // runOkTests();
        teste();
    }
    
@@ -60,8 +60,7 @@ public class TestParser {
 
    public void teste(){
        try {
-           ///home/edson/IdeaProjects/Interpretador/testes/mytest.lan
-           adp.parseFile("testes/semantica/certo/teste1.lan");
+           adp.parseFile("testes/semantica/certo/teste0.lan");
        }
        catch(Exception e){
            e.printStackTrace();

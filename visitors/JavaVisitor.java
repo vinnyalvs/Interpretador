@@ -53,15 +53,15 @@ public class JavaVisitor extends Visitor {
         }
         template.add("funcs", funcs);
 
-        System.out.println(template.render());
+       System.out.println(template.render());
         //Salva código-objeto em arquivo
         try {
             FileWriter myWriter = new FileWriter(fileName + ".java");
             myWriter.write(template.render());
             myWriter.close();
-            System.out.println("Código objeto salvo no arquivo " + fileName + ".java");
+            System.out.println("Código gerado salvo no arquivo " + fileName + ".java");
         } catch (IOException e) {
-            System.out.println("Aconteceu um erro ao salvar o código objeto em arquivo!");
+            System.out.println("Aconteceu um erro ao salvar o código gerado em arquivo!");
             e.printStackTrace();
         }
 

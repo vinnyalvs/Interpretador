@@ -21,8 +21,6 @@ public class TypeCheckVisitor extends Visitor {
 
     private ArrayList<String> logError;
 
-    float test_x;
-
     private HashMap<String, STyData> datas;
     private TyEnv<LocalEnv<SType>> env;
     private LocalEnv<SType> temp;
