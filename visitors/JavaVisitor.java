@@ -6,6 +6,8 @@ import ast.*;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
+import java.io.FileWriter;   // Import the FileWriter class
+import java.io.IOException;  // Import the IOException class to handle errors
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +50,17 @@ public class JavaVisitor extends Visitor {
         template.add("funcs", funcs);
 
         System.out.println(template.render());
-        // TODO save file in JAVA
+        //Salva código-objeto em arquivo
+        try {
+            FileWriter myWriter = new FileWriter(fileName + ".java");
+            myWriter.write(template.render());
+            myWriter.close();
+            System.out.println("Código objeto salvo no arquivo " + fileName + ".java");
+        } catch (IOException e) {
+            System.out.println("Aconteceu um erro ao salvar o código objeto em arquivo!");
+            e.printStackTrace();
+        }
+
     }
 
     @Override
