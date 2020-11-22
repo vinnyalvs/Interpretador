@@ -512,6 +512,8 @@ public class TypeCheckVisitor extends Visitor {
             i++;
         }
 
+        e.setF_id(f_id);
+
         if (env.get(f_id) == null)
         {
             logError.add( e.getLine() + ", " + e.getCol() + ": Função " + f_id + " não declarada");

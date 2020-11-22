@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class <name> {
     static Scanner scanner = new Scanner(System.in);
     static int _aux;
+    static ArrayList\<Object> _ret = new ArrayList\<Object>();
     <funcs; separator="\n\n">
   
     public static void main(String args[]) {
@@ -17,8 +18,8 @@ public class <name> {
 }
 >>
 
-func(type, name, params, decl, stmt) ::= <<
-public static <if(type)><type><else>void<endif> <name>(<params; separator=", ">) {
+func(returns, name, params, decl, stmt) ::= <<
+public static void <name>(<params; separator=", ">) {
     <if(decl)><decl; separator=";\n">;<endif>
     <if(stmt)><stmt; separator=";\n">;<endif>
 }
@@ -36,6 +37,12 @@ public_decl(decl) ::= <<
 
 param(type, name) ::= "<type> <name>"
 
+returnList (exprList) ::= <<
+_ret.clear();
+<exprList; separator=";\n">
+>>
+return(expr) ::= "_ret.add(<expr>)"
+
 array_type(type) ::= "<type>[]"
 int_type() ::= "int"
 float_type() ::= "float"
@@ -46,7 +53,6 @@ null() ::= "null"
 
 print(expr) ::= "System.out.print(<expr>)"
 read(expr) ::= "<expr> = scanner.nextInt()"
-return(expr) ::= "return <expr>;"
 
 iterate(expr, stmt) ::= <<
 _aux = <expr>;
@@ -79,11 +85,21 @@ new(type, expr) ::= "new <data_type(type)><if(expr)>[<expr>]<else>()<endif>"
 boolean_expr(value) ::= "<value>"
 float_expr(value) ::= "<value>f"
 int_expr(value) ::= "<value>"
-char_expr(value) ::= "<value>"
+char_expr(value) ::= "'<value>'"
 
 new_array(var, type, expr) ::= "<var> = new <type>[<expr>];"
 
-call(name, args) ::= <<<name>(<args; separator=", ">)>>
+call(name, args, receives) ::= <<
+<name>(<args; separator=", ">)<if(receives)>;<endif>
+<if(receives)><receives; separator=";\n"><endif>
+>>
+
+call_receive(id, index, type) ::= "<id> = (<type>) _ret.get(<index>)"
+
+PexpFunc(name, args, index) ::= <<
+<name>(<args; separator=", ">);
+_ret.get(<index>)
+>>
 
 mul_expr(left_expr, right_expr) ::= "(<left_expr> * <right_expr>)"
 div_expr(left_expr, right_expr) ::= "(<left_expr> / <right_expr>)"

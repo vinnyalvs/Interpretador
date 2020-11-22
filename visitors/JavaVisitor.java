@@ -100,13 +100,35 @@ public class JavaVisitor extends Visitor {
 
     @Override
     public void visit(Call e) {
-        ArrayList <SType> params_stype = new ArrayList<SType>();
+        stmt = groupTemplate.getInstanceOf("call");
 
         ArrayList <Expr> args_expr= e.getArgs().getExprList();
 
+        ArrayList<ST> args = new ArrayList<ST>();
         for( int i=0; i < args_expr.size() ; i++ ){
             args_expr.get(i).accept(this);
+            args.add(expr);
         } // Tipos dos params
+
+        SType[] returnsType = ((STyFunc) env.get(e.getF_id()).getFuncType()).getTypes();
+
+        ArrayList<ST> receives = new ArrayList<ST>();
+        for (int i = 0; i < e.getRets().size(); ++i)
+        {
+            e.getRets().get(i).accept(this);
+            ST receive = groupTemplate.getInstanceOf("call_receive");
+            receive.add("id",expr);
+            receive.add("index", i);
+
+            String type = returnsType[i].toString().matches("Char|Float|Int|Bool") ? returnsType[i].toString().toLowerCase() : returnsType[i].toString();
+
+            receive.add("type", type);
+            receives.add(receive);
+        }
+
+        stmt.add("args", args);
+        stmt.add("receives", receives);
+        stmt.add ("name", e.getF_id());
     }
 
     @Override
@@ -192,13 +214,13 @@ public class JavaVisitor extends Visitor {
         LocalEnv<SType> local = env.get(id);
         Set<String> keys = local.getKeys();
 
-        ArrayList<Type> func_rets = f.getRet();
-        for(Type ret : func_rets){
-            ret.accept(this);
-            fun.add("type", ret);
-            break;
-            // TODO multiple returns
-        }
+//        ArrayList<Type> func_rets = f.getRet();
+//        for(Type ret : func_rets){
+//            ret.accept(this);
+//            fun.add("returns", ret);
+//            break;
+//            // TODO multiple returns
+//        }
 
         params = new ArrayList<ST>();
         ParamList paramList = f.getParamList();
@@ -401,7 +423,23 @@ public class JavaVisitor extends Visitor {
 
     @Override
     public void visit(PexpFunc e) {
+        ST aux = groupTemplate.getInstanceOf("PexpFunc");
 
+        ArrayList <Expr> args_expr= e.getEList().getExprList();
+
+        ArrayList<ST> args = new ArrayList<ST>();
+        for( int i=0; i < args_expr.size() ; i++ ){
+            args_expr.get(i).accept(this);
+            args.add(expr);
+        } // Tipos dos params
+
+        e.getIndex().accept(this);
+        ST index = expr;
+
+        aux.add("args", args);
+        aux.add("index", index);
+        aux.add ("name", e.getF_id());
+        expr = aux;
     }
 
     @Override
@@ -420,13 +458,20 @@ public class JavaVisitor extends Visitor {
     }
 
     @Override
-    public void visit(Return e) {
-        /*stmt = groupTemplate.getInstanceOf("return");
+    public void visit(Return e) { //TODO relatar como return foi tratado
+        stmt = groupTemplate.getInstanceOf("returnList");
         ArrayList<Expr> exps = e.getArgs();
+        ArrayList<ST> exprList = new ArrayList<>();
         for(Expr exp : exps){
             exp.accept(this);
-            stmt.add("expr", expr);
-        } */
+
+            ST temp = groupTemplate.getInstanceOf("return");
+            temp.add ("expr", expr);
+
+            exprList.add( temp );
+        }
+
+        stmt.add("exprList", exprList);
     }
 
     @Override

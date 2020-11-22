@@ -6,6 +6,7 @@ public class PexpFunc extends Expr{
     Expr index;
     ExprList eList;
     String id;
+    String f_id;
 
     public PexpFunc(int line, int col, Expr index, ExprList eList, String id) {
         super(line, col);
@@ -24,6 +25,14 @@ public class PexpFunc extends Expr{
 
     public String getId() {
         return id;
+    }
+
+    public String getF_id() {
+        return f_id;
+    }
+
+    public void setF_id(String f_id) {
+        this.f_id = f_id;
     }
 
     @Override
