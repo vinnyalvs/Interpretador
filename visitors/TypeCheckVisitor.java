@@ -256,6 +256,8 @@ public class TypeCheckVisitor extends Visitor {
 
     @Override
     public void visit(Iterate e) {
+        e.setMyCount(Iterate.itrCount);
+        Iterate.itrCount++;
         e.getTest().accept(this);
         SType o = stk.pop();
         if(o.match(tyint)){

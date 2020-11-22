@@ -1,6 +1,6 @@
 group java;
 
-program(name, funcs, data) ::= <<
+program(name, funcs, data, itr_count) ::= <<
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -8,7 +8,8 @@ import java.util.Scanner;
 
 public class <name> {
     static Scanner scanner = new Scanner(System.in);
-    static int _aux;
+    static int[] _aux = new int[<itr_count>];
+    static int[] _i = new int[<itr_count>];
     static ArrayList\<Object> _ret = new ArrayList\<Object>();
     <funcs; separator="\n\n">
   
@@ -54,9 +55,9 @@ null() ::= "null"
 print(expr) ::= "System.out.print(<expr>)"
 read(expr) ::= "<expr> = scanner.nextInt()"
 
-iterate(expr, stmt) ::= <<
-_aux = <expr>;
-for(int _i=0; _i \< _aux; _i++ ) {
+iterate(expr, stmt, count) ::= <<
+_aux[<count>] = <expr>;
+for(_i[<count>]=0; _i[<count>] \< _aux[<count>]; _i[<count>]++ ) {
     <stmt_list(stmt)>;
 }
 >>

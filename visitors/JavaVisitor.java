@@ -23,6 +23,7 @@ public class JavaVisitor extends Visitor {
 
     private String fileName;
 
+
     TyEnv<LocalEnv<SType>> env;
 
     public JavaVisitor(String fileName, TyEnv<LocalEnv<SType>> env, HashMap<String, STyData> datas) {
@@ -35,6 +36,8 @@ public class JavaVisitor extends Visitor {
     @Override
     public void visit(Program p) {
         ST template = groupTemplate.getInstanceOf("program");
+
+        template.add("itr_count", Iterate.itrCount);
 
         template.add("name", fileName);
         datas = new ArrayList<ST>();
@@ -295,6 +298,7 @@ public class JavaVisitor extends Visitor {
     @Override
     public void visit(Iterate e) { // TODO relatar o iterate _aux // TODO for alinhad
         ST aux = groupTemplate.getInstanceOf("iterate");
+        aux.add("count", e.getMyCount());
         e.getTest().accept(this);
         aux.add("expr", expr);
         e.getBody().accept(this);
@@ -303,9 +307,6 @@ public class JavaVisitor extends Visitor {
             aux.add("stmt", stmt);
             stmt = aux;
         }
-
-
-
     }
 
     @Override

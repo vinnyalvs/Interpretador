@@ -61,7 +61,7 @@ public class TestParser {
    public void teste(){
        try {
            ///home/edson/IdeaProjects/Interpretador/testes/mytest.lan
-           adp.parseFile("src/testes/semantica/certo/teste9.lan");
+           adp.parseFile("testes/semantica/certo/teste0.lan");
        }
        catch(Exception e){
            e.printStackTrace();
